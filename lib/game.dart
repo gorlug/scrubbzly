@@ -13,18 +13,18 @@ class Game {
       final row = <Block>[];
       for (var x = 0; x < lengthX; x++) {
         if (y == middle && x == 0) {
-          row.add(EndBlock());
+          row.add(EndBlock(x: x, y: y));
         }
         else if (y == startA && x == lengthX - 1) {
-          row.add(StartABlock());
+          row.add(StartABlock(x: x, y: y));
         }
         else if (y == startB && x == lengthX - 1) {
-          row.add(StartBBlock());
+          row.add(StartBBlock(x: x, y: y));
         }
         else if (y == 0 || x == 0 || x == lengthX - 1 || y == lengthY - 1) {
-          row.add(WallBlock());
+          row.add(WallBlock(x: x, y: y));
         } else {
-          row.add(EmptyBlock());
+          row.add(EmptyBlock(x: x, y: y));
         }
       }
       _board.add(row);
@@ -40,5 +40,9 @@ class Game {
       buffer.writeln();
     }
     return buffer.toString();
+  }
+
+  Block getBlock(int x, int y) {
+    return _board[y][x];
   }
 }

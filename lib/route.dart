@@ -22,11 +22,11 @@ import 'block.dart';
 ///
 ///
 
-class RouteBlock with Block {
+class RouteBlock extends Block {
   BlockSide start;
   BlockSide? end;
 
-  RouteBlock(this.start);
+  RouteBlock({required super.x, required super.y, required this.start});
 
   @override
   String toChar() {

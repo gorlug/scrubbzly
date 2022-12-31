@@ -2,7 +2,7 @@ import 'package:jira_game/route.dart';
 import 'package:test/test.dart';
 
 void expectRouteChar(BlockSide start, BlockSide end, String expectedChar) {
-  final block = RouteBlock(start);
+  final block = RouteBlock(start: start, x: 0, y: 0);
   block.end = end;
   expect(block.toChar(), expectedChar);
 }

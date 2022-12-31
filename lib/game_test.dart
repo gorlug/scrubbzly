@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 
+import 'block.dart';
 import 'game.dart';
 
 void main() {
@@ -14,6 +15,12 @@ XOOOB
 XXXXX
 ''';
       expect(game.printBoard(), expectedBoard);
+    });
+
+    test('get start block A', () {
+      final game = Game(lengthX: 3, lengthY: 3);
+      final startBlock = game.getBlock(4, 1);
+      expect(startBlock, isA<StartABlock>());
     });
   });
 }
