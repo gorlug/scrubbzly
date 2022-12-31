@@ -1,3 +1,6 @@
+import 'package:jira_game/game.dart';
+import 'package:jira_game/route.dart';
+
 abstract class Block {
   final int x;
   final int y;
@@ -5,6 +8,10 @@ abstract class Block {
   Block({required this.x, required this.y});
 
   String toChar();
+
+  Block getRightNeighbor(Game game) {
+    return game.getBlock(x + 1, y);
+  }
 }
 
 class EmptyBlock extends Block {
