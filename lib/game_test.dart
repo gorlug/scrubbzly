@@ -8,9 +8,9 @@ void main() {
       final game = Game(lengthX: 3, lengthY: 3);
       print(game.printBoard());
       const String expectedBoard = '''XXXXX
-XOOOX
-XOOOX
-XOOOX
+XOOOA
+EOOOX
+XOOOB
 XXXXX
 ''';
       expect(game.printBoard(), expectedBoard);
