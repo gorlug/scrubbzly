@@ -1,3 +1,5 @@
+import 'block.dart';
+
 /// Board
 ///
 /// X|X|X|X|X
@@ -19,10 +21,6 @@
 /// X|X|X|X|X
 ///
 ///
-
-mixin Block {
-  String toChar();
-}
 
 class RouteBlock with Block {
   BlockSide start;
@@ -106,4 +104,10 @@ extension RouteCharExtension on RouteChar {
         return '┃';
     }
   }
+}
+
+class NextBlockForRouteSelector {
+  final RouteBlock currentBlock;
+
+  NextBlockForRouteSelector({required this.currentBlock});
 }
