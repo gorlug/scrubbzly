@@ -12,6 +12,18 @@ abstract class Block {
   Block getRightNeighbor(Game game) {
     return game.getBlock(x + 1, y);
   }
+
+  Block getLeftNeighbor(Game game) {
+    return game.getBlock(x - 1, y);
+  }
+
+  Block getTopNeighbor(Game game) {
+    return game.getBlock(x, y - 1);
+  }
+
+  Block getBottomNeighbor(Game game) {
+    return game.getBlock(x, y + 1);
+  }
 }
 
 class EmptyBlock extends Block {
