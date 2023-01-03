@@ -1,12 +1,11 @@
 import 'package:jira_game/block.dart';
-import 'package:jira_game/route.dart';
+import 'package:jira_game/route_block.dart';
 import 'package:test/test.dart';
 
 import 'game.dart';
 
 void main() {
-  group('Block', ()
-  {
+  group('Block', () {
     test('get neighbouring right block', () {
       final game = Game(lengthX: 3, lengthY: 3);
       final block = game.getBlock(3, 1);

@@ -1,5 +1,5 @@
 import 'package:jira_game/game.dart';
-import 'package:jira_game/route.dart';
+import 'package:jira_game/route_block.dart';
 
 abstract class Block {
   final int x;
