@@ -73,12 +73,27 @@ void main() {
     test('should select the next route randomly', () {
       // arrange
       final game = Game(lengthX: 3, lengthY: 3);
-      final startBlock = game.startABlock;
-      final block = startBlock.getLeftNeighbor(game);
-      final routeBlock =
-          RouteBlock(x: block.x, y: block.y, start: BlockSide.right);
-      final numberGenerator = MockRandomNumberGenerator(randomNumber: 2);
+      RouteBlock routeBlock = _createRouteBlock(game);
+      final numberGenerator = MockRandomNumberGenerator(randomNumbers: [2]);
+      final selector = NextBlockForRouteSelector(
+          currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
 
+      // act
+      final nextBlock = selector.selectNextBlock(game);
+
+      // assert
+      expect(nextBlock.x, 3);
+      expect(nextBlock.y, 2);
+      expect(nextBlock.start, BlockSide.top);
+      expect(routeBlock.end, BlockSide.bottom);
+    });
+
+    test('should select a different block if the first chosen one is a wall',
+        () {
+      // arrange
+      final game = Game(lengthX: 3, lengthY: 3);
+      RouteBlock routeBlock = _createRouteBlock(game);
+      final numberGenerator = MockRandomNumberGenerator(randomNumbers: [0, 2]);
       final selector = NextBlockForRouteSelector(
           currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
 
@@ -94,13 +109,22 @@ void main() {
   });
 }
 
-class MockRandomNumberGenerator with RandomNumberGenerator {
-  int randomNumber;
+RouteBlock _createRouteBlock(Game game) {
+  final startBlock = game.startABlock;
+  final block = startBlock.getLeftNeighbor(game);
+  final routeBlock = RouteBlock(x: block.x, y: block.y, start: BlockSide.right);
+  return routeBlock;
+}
 
-  MockRandomNumberGenerator({this.randomNumber = 0});
+class MockRandomNumberGenerator with RandomNumberGenerator {
+  List<int> randomNumbers;
+  int _timesCalled = 0;
+
+  MockRandomNumberGenerator({this.randomNumbers = const [0]});
 
   @override
   int generateRandomNumber(int max) {
-    return randomNumber;
+    final nextIndex = _timesCalled++ % randomNumbers.length;
+    return randomNumbers[nextIndex];
   }
 }

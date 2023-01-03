@@ -132,9 +132,13 @@ class NextBlockForRouteSelector {
       this.randomNumberGenerator = const RandomNumberGeneratorImpl()});
 
   RouteBlock selectNextBlock(Game game) {
-    final blockSide =
+    BlockSide blockSide =
         blockSides[randomNumberGenerator.generateRandomNumber(4)]!;
-    final block = currentBlock.getNeighbor(game, blockSide);
+    Block block = currentBlock.getNeighbor(game, blockSide);
+    if (block is WallBlock) {
+      blockSide = blockSides[randomNumberGenerator.generateRandomNumber(4)]!;
+      block = currentBlock.getNeighbor(game, blockSide);
+    }
     currentBlock.end = blockSide;
     return RouteBlock(
         x: block.x, y: block.y, start: neighboringBlockSide[blockSide]!);
