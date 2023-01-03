@@ -1,3 +1,4 @@
+import 'package:jira_game/block.dart';
 import 'package:jira_game/random_number_generator.dart';
 import 'package:jira_game/route.dart';
 import 'package:test/test.dart';
@@ -74,7 +75,7 @@ void main() {
       // arrange
       final game = Game(lengthX: 3, lengthY: 3);
       RouteBlock routeBlock = _createRouteBlock(game);
-      final numberGenerator = MockRandomNumberGenerator(randomNumbers: [2]);
+      final numberGenerator = MockRandomNumberGenerator(randomNumbers: [0]);
       final selector = NextBlockForRouteSelector(
           currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
 
@@ -82,48 +83,28 @@ void main() {
       final nextBlock = selector.selectNextBlock(game);
 
       // assert
+      expect(numberGenerator.maxValues, [2]);
       expect(nextBlock.x, 3);
       expect(nextBlock.y, 2);
       expect(nextBlock.start, BlockSide.top);
       expect(routeBlock.end, BlockSide.bottom);
     });
 
-    test('should select a different block if the first chosen one is a wall',
-        () {
+    test('should throw an error if no valid block can be found', () {
       // arrange
       final game = Game(lengthX: 3, lengthY: 3);
-      RouteBlock routeBlock = _createRouteBlock(game);
-      final numberGenerator = MockRandomNumberGenerator(randomNumbers: [0, 2]);
-      final selector = NextBlockForRouteSelector(
-          currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
-
-      // act
-      final nextBlock = selector.selectNextBlock(game);
-
-      // assert
-      expect(nextBlock.x, 3);
-      expect(nextBlock.y, 2);
-      expect(nextBlock.start, BlockSide.top);
-      expect(routeBlock.end, BlockSide.bottom);
-    });
-
-    test('should not select StartABlock', () {
-      // arrange
-      final game = Game(lengthX: 3, lengthY: 3);
+      game.setBlock(WallBlock(x: 2, y: 1));
+      game.setBlock(WallBlock(x: 3, y: 2));
       RouteBlock routeBlock = RouteBlock(x: 3, y: 1, start: BlockSide.left);
       final numberGenerator =
           MockRandomNumberGenerator(randomNumbers: [0, 1, 2]);
       final selector = NextBlockForRouteSelector(
           currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
+      print(game.printBoard());
 
-      // act
-      final nextBlock = selector.selectNextBlock(game);
-
-      // assert
-      expect(nextBlock.x, 3);
-      expect(nextBlock.y, 2);
-      expect(nextBlock.start, BlockSide.top);
-      expect(routeBlock.end, BlockSide.bottom);
+      // act/assert
+      expect(() => selector.selectNextBlock(game),
+          throwsA(const TypeMatcher<NoNextRouteFoundException>()));
     });
   });
 }
@@ -138,11 +119,13 @@ RouteBlock _createRouteBlock(Game game) {
 class MockRandomNumberGenerator with RandomNumberGenerator {
   List<int> randomNumbers;
   int _timesCalled = 0;
+  List<int> maxValues = [];
 
   MockRandomNumberGenerator({this.randomNumbers = const [0]});
 
   @override
   int generateRandomNumber(int max) {
+    maxValues.add(max);
     final nextIndex = _timesCalled++ % randomNumbers.length;
     return randomNumbers[nextIndex];
   }

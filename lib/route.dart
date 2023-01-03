@@ -68,6 +68,11 @@ class RouteBlock extends Block {
     }
     return RouteChar.topBottom.char;
   }
+
+  @override
+  String toString() {
+    return 'RouteBlock{x: $x, y: $y, start: $start, end: $end}';
+  }
 }
 
 class Route {
@@ -127,23 +132,48 @@ class NextBlockForRouteSelector {
   final RouteBlock currentBlock;
   final RandomNumberGenerator randomNumberGenerator;
 
-  NextBlockForRouteSelector({required this.currentBlock,
-    this.randomNumberGenerator = const RandomNumberGeneratorImpl()});
+  NextBlockForRouteSelector(
+      {required this.currentBlock,
+      this.randomNumberGenerator = const RandomNumberGeneratorImpl()});
 
   RouteBlock selectNextBlock(Game game) {
-    BlockSide blockSide;
-    Block block;
-    do {
-      blockSide = blockSides[randomNumberGenerator.generateRandomNumber(4)]!;
-      block = currentBlock.getNeighbor(game, blockSide);
-    } while (!_isValidBlock(block));
+    final validBlocks = _getValidBlocks(game);
+    print('validBlocks: ${validBlocks.map((e) => e.block)}');
+    if (validBlocks.isEmpty) {
+      throw NoNextRouteFoundException();
+    }
+    final randomIndex =
+        randomNumberGenerator.generateRandomNumber(validBlocks.length);
+    final nextBlockWithBlockSide = validBlocks[randomIndex];
+    final block = nextBlockWithBlockSide.block;
 
-    currentBlock.end = blockSide;
+    currentBlock.end = nextBlockWithBlockSide.blockSide;
     return RouteBlock(
-        x: block.x, y: block.y, start: neighboringBlockSide[blockSide]!);
+        x: block.x,
+        y: block.y,
+        start: neighboringBlockSide[nextBlockWithBlockSide.blockSide]!);
   }
 
   bool _isValidBlock(Block block) {
     return block is EmptyBlock;
   }
+
+  List<BlockWithBlockSide> _getValidBlocks(Game game) {
+    return blockSides.values
+        .map((blockSide) {
+          final block = currentBlock.getNeighbor(game, blockSide);
+          return BlockWithBlockSide(block, blockSide);
+        })
+        .where((blockWithBlockSide) => _isValidBlock(blockWithBlockSide.block))
+        .toList();
+  }
+}
+
+class NoNextRouteFoundException implements Exception {}
+
+class BlockWithBlockSide {
+  final Block block;
+  final BlockSide blockSide;
+
+  BlockWithBlockSide(this.block, this.blockSide);
 }

@@ -44,4 +44,8 @@ class Game {
   Block getBlock(int x, int y) {
     return _board[y][x];
   }
+
+  void setBlock(Block block) {
+    _board[block.y][block.x] = block;
+  }
 }

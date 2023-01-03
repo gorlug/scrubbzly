@@ -46,6 +46,11 @@ class EmptyBlock extends Block {
   String toChar() {
     return 'O';
   }
+
+  @override
+  String toString() {
+    return 'EmptyBlock{x: $x, y: $y}';
+  }
 }
 
 class WallBlock extends Block {
