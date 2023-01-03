@@ -2,6 +2,7 @@ import 'package:jira_game/block.dart';
 
 class Game {
   final List<List<Block>> _board = [];
+  late StartABlock startABlock;
 
   Game({required int lengthX, required int lengthY}) {
     lengthY += 2;
@@ -14,14 +15,12 @@ class Game {
       for (var x = 0; x < lengthX; x++) {
         if (y == middle && x == 0) {
           row.add(EndBlock(x: x, y: y));
-        }
-        else if (y == startA && x == lengthX - 1) {
-          row.add(StartABlock(x: x, y: y));
-        }
-        else if (y == startB && x == lengthX - 1) {
+        } else if (y == startA && x == lengthX - 1) {
+          startABlock = StartABlock(x: x, y: y);
+          row.add(startABlock);
+        } else if (y == startB && x == lengthX - 1) {
           row.add(StartBBlock(x: x, y: y));
-        }
-        else if (y == 0 || x == 0 || x == lengthX - 1 || y == lengthY - 1) {
+        } else if (y == 0 || x == 0 || x == lengthX - 1 || y == lengthY - 1) {
           row.add(WallBlock(x: x, y: y));
         } else {
           row.add(EmptyBlock(x: x, y: y));

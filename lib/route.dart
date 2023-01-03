@@ -1,3 +1,6 @@
+import 'package:jira_game/game.dart';
+import 'package:jira_game/random_number_generator.dart';
+
 import 'block.dart';
 
 /// Board
@@ -78,6 +81,20 @@ enum BlockSide {
   top,
 }
 
+Map<int, BlockSide> blockSides = {
+  0: BlockSide.top,
+  1: BlockSide.right,
+  2: BlockSide.bottom,
+  3: BlockSide.left,
+};
+
+Map<BlockSide, BlockSide> neighboringBlockSide = {
+  BlockSide.top: BlockSide.bottom,
+  BlockSide.right: BlockSide.left,
+  BlockSide.bottom: BlockSide.top,
+  BlockSide.left: BlockSide.right,
+};
+
 enum RouteChar {
   leftBottom,
   leftTop,
@@ -108,6 +125,18 @@ extension RouteCharExtension on RouteChar {
 
 class NextBlockForRouteSelector {
   final RouteBlock currentBlock;
+  final RandomNumberGenerator randomNumberGenerator;
 
-  NextBlockForRouteSelector({required this.currentBlock});
+  NextBlockForRouteSelector(
+      {required this.currentBlock,
+      this.randomNumberGenerator = const RandomNumberGeneratorImpl()});
+
+  RouteBlock selectNextBlock(Game game) {
+    final blockSide =
+        blockSides[randomNumberGenerator.generateRandomNumber(4)]!;
+    final block = currentBlock.getNeighbor(game, blockSide);
+    currentBlock.end = blockSide;
+    return RouteBlock(
+        x: block.x, y: block.y, start: neighboringBlockSide[blockSide]!);
+  }
 }

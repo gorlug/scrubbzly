@@ -24,6 +24,19 @@ abstract class Block {
   Block getBottomNeighbor(Game game) {
     return game.getBlock(x, y + 1);
   }
+
+  Block getNeighbor(Game game, BlockSide side) {
+    switch (side) {
+      case BlockSide.right:
+        return getRightNeighbor(game);
+      case BlockSide.left:
+        return getLeftNeighbor(game);
+      case BlockSide.top:
+        return getTopNeighbor(game);
+      case BlockSide.bottom:
+        return getBottomNeighbor(game);
+    }
+  }
 }
 
 class EmptyBlock extends Block {
