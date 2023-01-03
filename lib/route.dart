@@ -28,6 +28,7 @@ import 'block.dart';
 class RouteBlock extends Block {
   BlockSide start;
   BlockSide? end;
+  bool isEndBlock = false;
 
   RouteBlock({required super.x, required super.y, required this.start});
 
@@ -142,9 +143,12 @@ class NextBlockForRouteSelector {
     if (validBlocks.isEmpty) {
       throw NoNextRouteFoundException();
     }
-    final randomIndex =
-        randomNumberGenerator.generateRandomNumber(validBlocks.length);
-    final nextBlockWithBlockSide = validBlocks[randomIndex];
+
+    if (_containsEndBlock(validBlocks)) {
+      return _returnCurrentBlockAsEndRouteBlock(validBlocks);
+    }
+
+    BlockWithBlockSide nextBlockWithBlockSide = _getRandomBlock(validBlocks);
     final block = nextBlockWithBlockSide.block;
 
     currentBlock.end = nextBlockWithBlockSide.blockSide;
@@ -154,8 +158,16 @@ class NextBlockForRouteSelector {
         start: neighboringBlockSide[nextBlockWithBlockSide.blockSide]!);
   }
 
+  RouteBlock _returnCurrentBlockAsEndRouteBlock(
+      List<BlockWithBlockSide> validBlocks) {
+    final endBlockWithSide = _getEndBlock(validBlocks);
+    currentBlock.isEndBlock = true;
+    currentBlock.end = endBlockWithSide.blockSide;
+    return currentBlock;
+  }
+
   bool _isValidBlock(Block block) {
-    return block is EmptyBlock;
+    return block is EmptyBlock || block is EndBlock;
   }
 
   List<BlockWithBlockSide> _getValidBlocks(Game game) {
@@ -166,6 +178,20 @@ class NextBlockForRouteSelector {
         })
         .where((blockWithBlockSide) => _isValidBlock(blockWithBlockSide.block))
         .toList();
+  }
+
+  bool _containsEndBlock(List<BlockWithBlockSide> blocks) {
+    return blocks.any((element) => element.block is EndBlock);
+  }
+
+  BlockWithBlockSide _getEndBlock(List<BlockWithBlockSide> validBlocks) {
+    return validBlocks.firstWhere((element) => element.block is EndBlock);
+  }
+
+  BlockWithBlockSide _getRandomBlock(List<BlockWithBlockSide> validBlocks) {
+    final randomIndex =
+        randomNumberGenerator.generateRandomNumber(validBlocks.length);
+    return validBlocks[randomIndex];
   }
 }
 

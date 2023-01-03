@@ -100,11 +100,27 @@ void main() {
           MockRandomNumberGenerator(randomNumbers: [0, 1, 2]);
       final selector = NextBlockForRouteSelector(
           currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
-      print(game.printBoard());
 
       // act/assert
       expect(() => selector.selectNextBlock(game),
           throwsA(const TypeMatcher<NoNextRouteFoundException>()));
+    });
+
+    test('should always choose the end block if it is available', () {
+      // arrange
+      final game = Game(lengthX: 3, lengthY: 3);
+      RouteBlock routeBlock = RouteBlock(x: 1, y: 2, start: BlockSide.bottom);
+      final numberGenerator = MockRandomNumberGenerator(randomNumbers: [0]);
+      final selector = NextBlockForRouteSelector(
+          currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
+      final nextBlock = selector.selectNextBlock(game);
+
+      // act/assert
+      expect(nextBlock.x, 1);
+      expect(nextBlock.y, 2);
+      expect(nextBlock.start, BlockSide.bottom);
+      expect(routeBlock.end, BlockSide.left);
+      expect(routeBlock.isEndBlock, true);
     });
   });
 }
