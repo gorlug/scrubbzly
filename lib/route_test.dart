@@ -106,6 +106,25 @@ void main() {
       expect(nextBlock.start, BlockSide.top);
       expect(routeBlock.end, BlockSide.bottom);
     });
+
+    test('should not select StartABlock', () {
+      // arrange
+      final game = Game(lengthX: 3, lengthY: 3);
+      RouteBlock routeBlock = RouteBlock(x: 3, y: 1, start: BlockSide.left);
+      final numberGenerator =
+          MockRandomNumberGenerator(randomNumbers: [0, 1, 2]);
+      final selector = NextBlockForRouteSelector(
+          currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
+
+      // act
+      final nextBlock = selector.selectNextBlock(game);
+
+      // assert
+      expect(nextBlock.x, 3);
+      expect(nextBlock.y, 2);
+      expect(nextBlock.start, BlockSide.top);
+      expect(routeBlock.end, BlockSide.bottom);
+    });
   });
 }
 

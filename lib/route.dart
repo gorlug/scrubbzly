@@ -127,20 +127,23 @@ class NextBlockForRouteSelector {
   final RouteBlock currentBlock;
   final RandomNumberGenerator randomNumberGenerator;
 
-  NextBlockForRouteSelector(
-      {required this.currentBlock,
-      this.randomNumberGenerator = const RandomNumberGeneratorImpl()});
+  NextBlockForRouteSelector({required this.currentBlock,
+    this.randomNumberGenerator = const RandomNumberGeneratorImpl()});
 
   RouteBlock selectNextBlock(Game game) {
-    BlockSide blockSide =
-        blockSides[randomNumberGenerator.generateRandomNumber(4)]!;
-    Block block = currentBlock.getNeighbor(game, blockSide);
-    if (block is WallBlock) {
+    BlockSide blockSide;
+    Block block;
+    do {
       blockSide = blockSides[randomNumberGenerator.generateRandomNumber(4)]!;
       block = currentBlock.getNeighbor(game, blockSide);
-    }
+    } while (!_isValidBlock(block));
+
     currentBlock.end = blockSide;
     return RouteBlock(
         x: block.x, y: block.y, start: neighboringBlockSide[blockSide]!);
+  }
+
+  bool _isValidBlock(Block block) {
+    return block is EmptyBlock;
   }
 }
