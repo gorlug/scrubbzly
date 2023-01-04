@@ -76,11 +76,11 @@ void main() {
       final game = Game(lengthX: 3, lengthY: 3);
       RouteBlock routeBlock = _createRouteBlock(game);
       final numberGenerator = MockRandomNumberGenerator(randomNumbers: [0]);
-      final selector = NextBlockForRouteSelector(
-          currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
+      final selector =
+          NextBlockForRouteSelector(randomNumberGenerator: numberGenerator);
 
       // act
-      final nextBlock = selector.selectNextBlock(game);
+      final nextBlock = selector.selectNextBlock(routeBlock, game);
 
       // assert
       expect(numberGenerator.maxValues, [2]);
@@ -98,11 +98,11 @@ void main() {
       RouteBlock routeBlock = RouteBlock(x: 3, y: 1, start: BlockSide.left);
       final numberGenerator =
           MockRandomNumberGenerator(randomNumbers: [0, 1, 2]);
-      final selector = NextBlockForRouteSelector(
-          currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
+      final selector =
+          NextBlockForRouteSelector(randomNumberGenerator: numberGenerator);
 
       // act/assert
-      expect(() => selector.selectNextBlock(game),
+      expect(() => selector.selectNextBlock(routeBlock, game),
           throwsA(const TypeMatcher<NoNextRouteFoundException>()));
     });
 
@@ -111,9 +111,9 @@ void main() {
       final game = Game(lengthX: 3, lengthY: 3);
       RouteBlock routeBlock = RouteBlock(x: 1, y: 2, start: BlockSide.bottom);
       final numberGenerator = MockRandomNumberGenerator(randomNumbers: [0]);
-      final selector = NextBlockForRouteSelector(
-          currentBlock: routeBlock, randomNumberGenerator: numberGenerator);
-      final nextBlock = selector.selectNextBlock(game);
+      final selector =
+          NextBlockForRouteSelector(randomNumberGenerator: numberGenerator);
+      final nextBlock = selector.selectNextBlock(routeBlock, game);
 
       // act/assert
       expect(nextBlock.x, 1);

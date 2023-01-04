@@ -28,9 +28,14 @@ import 'block.dart';
 class RouteBlock extends Block {
   BlockSide start;
   BlockSide? end;
-  bool isEndBlock = false;
+  bool isEndBlock;
 
-  RouteBlock({required super.x, required super.y, required this.start});
+  RouteBlock(
+      {required super.x,
+      required super.y,
+      this.start = BlockSide.right,
+      this.end,
+      this.isEndBlock = false});
 
   @override
   String toChar() {
@@ -72,7 +77,7 @@ class RouteBlock extends Block {
 
   @override
   String toString() {
-    return 'RouteBlock{x: $x, y: $y, start: $start, end: $end}';
+    return 'RouteBlock{x: $x, y: $y, start: $start, end: $end, isEndBlock: $isEndBlock}';
   }
 }
 
@@ -133,7 +138,6 @@ class NextBlockForRouteSelector {
 
   RouteBlock selectNextBlock(RouteBlock currentBlock, Game game) {
     final validBlocks = _getValidBlocks(currentBlock, game);
-    print('validBlocks: ${validBlocks.map((e) => e.block)}');
     if (validBlocks.isEmpty) {
       throw NoNextRouteFoundException();
     }
@@ -142,7 +146,7 @@ class NextBlockForRouteSelector {
       return _returnCurrentBlockAsEndRouteBlock(currentBlock, validBlocks);
     }
 
-    BlockWithBlockSide nextBlockWithBlockSide = _getRandomBlock(validBlocks);
+    BlockWithBlockSide nextBlockWithBlockSide = getRandomBlock(validBlocks);
     final block = nextBlockWithBlockSide.block;
 
     currentBlock.end = nextBlockWithBlockSide.blockSide;
@@ -182,7 +186,7 @@ class NextBlockForRouteSelector {
     return validBlocks.firstWhere((element) => element.block is EndBlock);
   }
 
-  BlockWithBlockSide _getRandomBlock(List<BlockWithBlockSide> validBlocks) {
+  BlockWithBlockSide getRandomBlock(List<BlockWithBlockSide> validBlocks) {
     final randomIndex =
         randomNumberGenerator.generateRandomNumber(validBlocks.length);
     return validBlocks[randomIndex];

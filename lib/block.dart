@@ -7,6 +7,10 @@ abstract class Block {
 
   Block({required this.x, required this.y});
 
+  Block.fromOtherBlock(Block otherBlock)
+      : x = otherBlock.x,
+        y = otherBlock.y;
+
   String toChar();
 
   Block getRightNeighbor(Game game) {
@@ -55,6 +59,8 @@ class EmptyBlock extends Block {
 
 class WallBlock extends Block {
   WallBlock({required super.x, required super.y});
+
+  WallBlock.fromOtherBlock(Block otherBlock) : super.fromOtherBlock(otherBlock);
 
   @override
   String toChar() {
