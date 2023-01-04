@@ -31,7 +31,7 @@ class RedLineSprite extends GameBlockSprite {
 }
 
 mixin RotateTau4 on GameBlockSprite {
-  void _rotateTau(double tauValue) {
+  void rotateTau(double tauValue) {
     final effect = RotateEffect.by(
       tauValue,
       EffectController(duration: 0),
@@ -46,19 +46,19 @@ class CornerRedLineSprite extends GameBlockSprite with RotateTau4 {
   CornerRedLineSprite(GameBlock block, this.orientation) : super(block);
 
   @override
-  Future<void>? onLoad() {
+  Future<void>? onLoad() async {
     super.onLoad();
 
     if (orientation == CornerOrientation.topRight) {
-      _rotateTau(tau / 4);
+      rotateTau(tau / 4);
     }
 
     if (orientation == CornerOrientation.bottomRight) {
-      _rotateTau(tau / 2);
+      rotateTau(tau / 2);
     }
 
     if (orientation == CornerOrientation.bottomLeft) {
-      _rotateTau(-tau / 4);
+      rotateTau(-tau / 4);
     }
   }
 
@@ -74,28 +74,20 @@ class TShortRedLineSprite extends GameBlockSprite with RotateTau4 {
   TShortRedLineSprite(GameBlock block, this.orientation) : super(block);
 
   @override
-  Future<void>? onLoad() {
+  Future<void>? onLoad() async {
     super.onLoad();
 
     if (orientation == TeeOrientation.right) {
-      _rotateTau(tau / 4);
+      rotateTau(tau / 4);
     }
 
     if (orientation == TeeOrientation.bottom) {
-      _rotateTau(tau / 2);
+      rotateTau(tau / 2);
     }
 
     if (orientation == TeeOrientation.left) {
-      _rotateTau(-tau / 4);
+      rotateTau(-tau / 4);
     }
-  }
-
-  void _rotateTau(double tauValue) {
-    final effect = RotateEffect.by(
-      tauValue,
-      EffectController(duration: 0),
-    );
-    add(effect);
   }
 
   @override

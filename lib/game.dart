@@ -48,4 +48,6 @@ class Game {
   void setBlock(GameBlock block) {
     _board[block.y][block.x] = block;
   }
+
+  List<List<GameBlock>> get board => _board;
 }

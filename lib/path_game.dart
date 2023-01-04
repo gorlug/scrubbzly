@@ -145,10 +145,20 @@ class CrossSprite extends GameBlockSprite with RedLineAdder {
 
 enum TeeOrientation { top, right, bottom, left }
 
-class TeeSprite extends GameBlockSprite with RotateComponent, RedLineAdder {
-  TeeOrientation orientation = TeeOrientation.top;
+Map<TeeOrientation, double> teeTauValues = {
+  TeeOrientation.top: 0,
+  TeeOrientation.right: tau / 4,
+  TeeOrientation.bottom: tau / 2,
+  TeeOrientation.left: tau * 3 / 4,
+};
 
-  TeeSprite(super.block);
+class TeeSprite extends GameBlockSprite
+    with RotateComponent, RedLineAdder, RotateTau4 {
+  TeeOrientation orientation;
+
+  TeeSprite(super.block, {this.orientation = TeeOrientation.top}) {
+    rotateTau(teeTauValues[orientation]!);
+  }
 
   @override
   String getSprite() {
@@ -169,10 +179,20 @@ class TeeSprite extends GameBlockSprite with RotateComponent, RedLineAdder {
 
 enum CornerOrientation { topLeft, topRight, bottomRight, bottomLeft }
 
-class CornerSprite extends GameBlockSprite with RotateComponent, RedLineAdder {
-  CornerOrientation orientation = CornerOrientation.topLeft;
+Map<CornerOrientation, double> cornerTauValues = {
+  CornerOrientation.topLeft: 0,
+  CornerOrientation.topRight: tau / 4,
+  CornerOrientation.bottomRight: tau / 2,
+  CornerOrientation.bottomLeft: tau * 3 / 4,
+};
 
-  CornerSprite(super.block);
+class CornerSprite extends GameBlockSprite
+    with RotateComponent, RedLineAdder, RotateTau4 {
+  CornerOrientation orientation;
+
+  CornerSprite(super.block, {this.orientation = CornerOrientation.topLeft}) {
+    rotateTau(cornerTauValues[orientation]!);
+  }
 
   @override
   String getSprite() {
@@ -196,10 +216,13 @@ enum LineOrientation {
   vertical,
 }
 
-class LineSprite extends GameBlockSprite with RotateComponent, RedLineAdder {
-  LineOrientation orientation = LineOrientation.horizontal;
+class LineSprite extends GameBlockSprite
+    with RotateComponent, RedLineAdder, RotateTau4 {
+  LineOrientation orientation;
 
-  LineSprite(super.block);
+  LineSprite(super.block, {this.orientation = LineOrientation.horizontal}) {
+    rotateTau(orientation == LineOrientation.horizontal ? 0 : tau / 4);
+  }
 
   @override
   String getSprite() {
