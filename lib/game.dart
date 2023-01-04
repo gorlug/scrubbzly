@@ -1,7 +1,7 @@
 import 'package:jira_game/block.dart';
 
 class Game {
-  final List<List<Block>> _board = [];
+  final List<List<GameBlock>> _board = [];
   late StartABlock startABlock;
 
   Game({required int lengthX, required int lengthY}) {
@@ -11,7 +11,7 @@ class Game {
     final startA = lengthY ~/ 4;
     final startB = lengthY - startA - 1;
     for (var y = 0; y < lengthY; y++) {
-      final row = <Block>[];
+      final row = <GameBlock>[];
       for (var x = 0; x < lengthX; x++) {
         if (y == middle && x == 0) {
           row.add(EndBlock(x: x, y: y));
@@ -41,11 +41,11 @@ class Game {
     return buffer.toString();
   }
 
-  Block getBlock(int x, int y) {
+  GameBlock getBlock(int x, int y) {
     return _board[y][x];
   }
 
-  void setBlock(Block block) {
+  void setBlock(GameBlock block) {
     _board[block.y][block.x] = block;
   }
 }

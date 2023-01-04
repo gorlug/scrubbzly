@@ -1,35 +1,37 @@
 import 'package:jira_game/game.dart';
 import 'package:jira_game/route_block.dart';
 
-abstract class Block {
+class GameBlock {
   final int x;
   final int y;
 
-  Block({required this.x, required this.y});
+  GameBlock({required this.x, required this.y});
 
-  Block.fromOtherBlock(Block otherBlock)
+  GameBlock.fromOtherBlock(GameBlock otherBlock)
       : x = otherBlock.x,
         y = otherBlock.y;
 
-  String toChar();
+  String toChar() {
+    return 'B';
+  }
 
-  Block getRightNeighbor(Game game) {
+  GameBlock getRightNeighbor(Game game) {
     return game.getBlock(x + 1, y);
   }
 
-  Block getLeftNeighbor(Game game) {
+  GameBlock getLeftNeighbor(Game game) {
     return game.getBlock(x - 1, y);
   }
 
-  Block getTopNeighbor(Game game) {
+  GameBlock getTopNeighbor(Game game) {
     return game.getBlock(x, y - 1);
   }
 
-  Block getBottomNeighbor(Game game) {
+  GameBlock getBottomNeighbor(Game game) {
     return game.getBlock(x, y + 1);
   }
 
-  Block getNeighbor(Game game, BlockSide side) {
+  GameBlock getNeighbor(Game game, BlockSide side) {
     switch (side) {
       case BlockSide.right:
         return getRightNeighbor(game);
@@ -43,7 +45,7 @@ abstract class Block {
   }
 }
 
-class EmptyBlock extends Block {
+class EmptyBlock extends GameBlock {
   EmptyBlock({required super.x, required super.y});
 
   @override
@@ -57,10 +59,11 @@ class EmptyBlock extends Block {
   }
 }
 
-class WallBlock extends Block {
+class WallBlock extends GameBlock {
   WallBlock({required super.x, required super.y});
 
-  WallBlock.fromOtherBlock(Block otherBlock) : super.fromOtherBlock(otherBlock);
+  WallBlock.fromOtherBlock(GameBlock otherBlock)
+      : super.fromOtherBlock(otherBlock);
 
   @override
   String toChar() {
@@ -68,7 +71,7 @@ class WallBlock extends Block {
   }
 }
 
-class EndBlock extends Block {
+class EndBlock extends GameBlock {
   EndBlock({required super.x, required super.y});
 
   @override
@@ -77,7 +80,7 @@ class EndBlock extends Block {
   }
 }
 
-class StartABlock extends Block {
+class StartABlock extends GameBlock {
   StartABlock({required super.x, required super.y});
 
   @override
@@ -86,7 +89,7 @@ class StartABlock extends Block {
   }
 }
 
-class StartBBlock extends Block {
+class StartBBlock extends GameBlock {
   StartBBlock({required super.x, required super.y});
 
   @override

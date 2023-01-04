@@ -25,7 +25,7 @@ import 'block.dart';
 ///
 ///
 
-class RouteBlock extends Block {
+class RouteBlock extends GameBlock {
   BlockSide start;
   BlockSide? end;
   bool isEndBlock;
@@ -37,7 +37,7 @@ class RouteBlock extends Block {
       this.end,
       this.isEndBlock = false});
 
-  RouteBlock.fromOtherBlock(Block otherBlock)
+  RouteBlock.fromOtherBlock(GameBlock otherBlock)
       : start = BlockSide.right,
         isEndBlock = false,
         super.fromOtherBlock(otherBlock);
@@ -169,7 +169,7 @@ class NextBlockForRouteSelector {
     return currentBlock;
   }
 
-  bool _isValidBlock(Block block) {
+  bool _isValidBlock(GameBlock block) {
     return block is EmptyBlock || block is EndBlock;
   }
 
@@ -201,7 +201,7 @@ class NextBlockForRouteSelector {
 class NoNextRouteFoundException implements Exception {}
 
 class BlockWithBlockSide {
-  final Block block;
+  final GameBlock block;
   final BlockSide blockSide;
 
   BlockWithBlockSide(this.block, this.blockSide);
