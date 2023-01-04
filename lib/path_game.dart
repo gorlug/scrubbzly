@@ -81,11 +81,32 @@ mixin RotateComponent on GameBlockSprite {
   }
 }
 
+mixin RedLineAdder on GameBlockSprite {
+  @override
+  void onSecondaryClick() {
+    addRedLine();
+  }
+
+  void addRedLine() {
+    print('secondary');
+    if (redLineSprite == null) {
+      redLineSprite = createRedLineSprite();
+      gameRef.add(redLineSprite!);
+    } else {
+      gameRef.remove(redLineSprite!);
+      redLineSprite = null;
+    }
+  }
+
+  GameBlockSprite createRedLineSprite();
+}
+
 abstract class GameBlockSprite extends SpriteComponent
     with HasGameRef<PathGame>, TapCallbacks {
   GameBlock block;
   final double defaultWidth = 100;
   final double defaultHeight = 100;
+  GameBlockSprite? redLineSprite;
 
   GameBlockSprite(this.block);
 
@@ -106,30 +127,67 @@ abstract class GameBlockSprite extends SpriteComponent
   void onSecondaryClick() {}
 }
 
-class CrossSprite extends GameBlockSprite {
+class CrossSprite extends GameBlockSprite with RedLineAdder {
+  LineOrientation orientation = LineOrientation.horizontal;
+
   CrossSprite(super.block);
 
   @override
   String getSprite() {
     return 'cross.png';
   }
+
+  @override
+  GameBlockSprite createRedLineSprite() {
+    return RedLineSprite(block, orientation);
+  }
 }
 
-class TeeSprite extends GameBlockSprite with RotateComponent {
+enum TeeOrientation { top, right, bottom, left }
+
+class TeeSprite extends GameBlockSprite with RotateComponent, RedLineAdder {
+  TeeOrientation orientation = TeeOrientation.top;
+
   TeeSprite(super.block);
 
   @override
   String getSprite() {
     return 'tee.png';
   }
+
+  @override
+  GameBlockSprite createRedLineSprite() {
+    return TShortRedLineSprite(block, orientation);
+  }
+
+  @override
+  void onRotate() {
+    super.onRotate();
+    orientation = TeeOrientation.values[(orientation.index + 1) % 4];
+  }
 }
 
-class CornerSprite extends GameBlockSprite with RotateComponent {
+enum CornerOrientation { topLeft, topRight, bottomRight, bottomLeft }
+
+class CornerSprite extends GameBlockSprite with RotateComponent, RedLineAdder {
+  CornerOrientation orientation = CornerOrientation.topLeft;
+
   CornerSprite(super.block);
 
   @override
   String getSprite() {
     return 'corner.png';
+  }
+
+  @override
+  GameBlockSprite createRedLineSprite() {
+    return CornerRedLineSprite(block, orientation);
+  }
+
+  @override
+  void onRotate() {
+    super.onRotate();
+    orientation = CornerOrientation.values[(orientation.index + 1) % 4];
   }
 }
 
@@ -138,9 +196,8 @@ enum LineOrientation {
   vertical,
 }
 
-class LineSprite extends GameBlockSprite with RotateComponent {
+class LineSprite extends GameBlockSprite with RotateComponent, RedLineAdder {
   LineOrientation orientation = LineOrientation.horizontal;
-  RedLineSprite? redLineSprite;
 
   LineSprite(super.block);
 
@@ -150,16 +207,8 @@ class LineSprite extends GameBlockSprite with RotateComponent {
   }
 
   @override
-  void onSecondaryClick() {
-    super.onSecondaryClick();
-    print('secondary');
-    if (redLineSprite == null) {
-      redLineSprite = RedLineSprite(block, orientation);
-      gameRef.add(redLineSprite!);
-    } else {
-      gameRef.remove(redLineSprite!);
-      redLineSprite = null;
-    }
+  GameBlockSprite createRedLineSprite() {
+    return RedLineSprite(block, orientation);
   }
 
   @override

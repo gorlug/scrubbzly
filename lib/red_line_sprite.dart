@@ -29,3 +29,77 @@ class RedLineSprite extends GameBlockSprite {
     return 'lines/line.png';
   }
 }
+
+mixin RotateTau4 on GameBlockSprite {
+  void _rotateTau(double tauValue) {
+    final effect = RotateEffect.by(
+      tauValue,
+      EffectController(duration: 0),
+    );
+    add(effect);
+  }
+}
+
+class CornerRedLineSprite extends GameBlockSprite with RotateTau4 {
+  final CornerOrientation orientation;
+
+  CornerRedLineSprite(GameBlock block, this.orientation) : super(block);
+
+  @override
+  Future<void>? onLoad() {
+    super.onLoad();
+
+    if (orientation == CornerOrientation.topRight) {
+      _rotateTau(tau / 4);
+    }
+
+    if (orientation == CornerOrientation.bottomRight) {
+      _rotateTau(tau / 2);
+    }
+
+    if (orientation == CornerOrientation.bottomLeft) {
+      _rotateTau(-tau / 4);
+    }
+  }
+
+  @override
+  String getSprite() {
+    return 'lines/corner.png';
+  }
+}
+
+class TShortRedLineSprite extends GameBlockSprite with RotateTau4 {
+  final TeeOrientation orientation;
+
+  TShortRedLineSprite(GameBlock block, this.orientation) : super(block);
+
+  @override
+  Future<void>? onLoad() {
+    super.onLoad();
+
+    if (orientation == TeeOrientation.right) {
+      _rotateTau(tau / 4);
+    }
+
+    if (orientation == TeeOrientation.bottom) {
+      _rotateTau(tau / 2);
+    }
+
+    if (orientation == TeeOrientation.left) {
+      _rotateTau(-tau / 4);
+    }
+  }
+
+  void _rotateTau(double tauValue) {
+    final effect = RotateEffect.by(
+      tauValue,
+      EffectController(duration: 0),
+    );
+    add(effect);
+  }
+
+  @override
+  String getSprite() {
+    return 'lines/t_short.png';
+  }
+}
