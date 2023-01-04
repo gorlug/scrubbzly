@@ -70,6 +70,17 @@ void main() {
             routeEndBlock
           ].toString());
     });
+
+    test('go random', () {
+      final game = Game(lengthX: 10, lengthY: 4);
+      final aBlock = game.startABlock;
+      final leftOfABlock = aBlock.getLeftNeighbor(game);
+      final startBlock = RouteBlock.fromOtherBlock(leftOfABlock);
+      final selector = NextBlockForRouteSelector();
+      final route = Route(selector);
+      route.calculateRoute(startBlock, game);
+      print(game.printBoard());
+    });
   });
 }
 

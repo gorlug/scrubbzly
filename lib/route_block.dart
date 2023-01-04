@@ -37,6 +37,11 @@ class RouteBlock extends Block {
       this.end,
       this.isEndBlock = false});
 
+  RouteBlock.fromOtherBlock(Block otherBlock)
+      : start = BlockSide.right,
+        isEndBlock = false,
+        super.fromOtherBlock(otherBlock);
+
   @override
   String toChar() {
     if (start == BlockSide.left && end == BlockSide.bottom) {
