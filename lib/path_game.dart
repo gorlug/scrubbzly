@@ -13,7 +13,7 @@ class PathGame extends FlameGame
         HasTappableComponents,
         HorizontalDragDetector,
         SecondaryTapDetector,
-        DoubleTapDetector {
+        LongPressDetector {
   Set<Component> _horizontalDragComponents = {};
 
   @override
@@ -59,9 +59,8 @@ class PathGame extends FlameGame
   }
 
   @override
-  void onDoubleTapDown(TapDownInfo info) {
-    super.onDoubleTapDown(info);
-    print('onDoubleTapDown');
+  void onLongPressStart(LongPressStartInfo info) {
+    super.onLongPressStart(info);
     onSecondary(info.eventPosition.game);
   }
 }
@@ -69,6 +68,7 @@ class PathGame extends FlameGame
 mixin RotateComponent on GameBlockSprite {
   @override
   void onTapUp(TapUpEvent event) {
+    super.onTapUp(event);
     onRotate();
   }
 
@@ -140,6 +140,7 @@ enum LineOrientation {
 
 class LineSprite extends GameBlockSprite with RotateComponent {
   LineOrientation orientation = LineOrientation.horizontal;
+  RedLineSprite? redLineSprite;
 
   LineSprite(super.block);
 
@@ -152,8 +153,13 @@ class LineSprite extends GameBlockSprite with RotateComponent {
   void onSecondaryClick() {
     super.onSecondaryClick();
     print('secondary');
-    final line = RedLineSprite(block, orientation);
-    gameRef.add(line);
+    if (redLineSprite == null) {
+      redLineSprite = RedLineSprite(block, orientation);
+      gameRef.add(redLineSprite!);
+    } else {
+      gameRef.remove(redLineSprite!);
+      redLineSprite = null;
+    }
   }
 
   @override
