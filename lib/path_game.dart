@@ -106,7 +106,7 @@ mixin RotateComponent on GameBlockSprite {
 mixin RedLineAdder on GameBlockSprite {
   void onSecondaryClick(GameBlockSprite lastRouteSprite) {
     print('secondary');
-    if (redLineSprite == null && _isValidRoute(lastRouteSprite)) {
+    if (redLineSprite == null && _isValidRouteAndSetRouteEnd(lastRouteSprite)) {
       addRedLine();
     } else if (redLineSprite != null && gameRef.isLastRouteSprite(this)) {
       _removeRedLine();
@@ -121,15 +121,16 @@ mixin RedLineAdder on GameBlockSprite {
 
   GameBlockSprite createRedLineSprite();
 
-  bool _isValidRoute(GameBlockSprite lastRouteSprite) {
-    if (lastRouteSprite is StartSprite) {
-      return gameRef.board.startSprite!.getRightNeighbor(gameRef) == this;
+  bool _isValidRouteAndSetRouteEnd(GameBlockSprite lastRouteSprite) {
+    final isNeighbor = _spriteIsNeighbor(lastRouteSprite);
+    if (isNeighbor == null) {
+      return false;
     }
-    final List<GameBlockSprite> validSprites =
-        blockSides.values.map((blockSide) {
-      return lastRouteSprite.getNeighbor(gameRef, blockSide);
-    }).toList();
-    return validSprites.contains(this);
+    if (getOpenBlockSides()
+        .contains(getOppositeBlockSide(isNeighbor.blockSide))) {
+      return true;
+    }
+    return false;
   }
 
   void _removeRedLine() {
@@ -137,6 +138,27 @@ mixin RedLineAdder on GameBlockSprite {
     redLineSprite = null;
     gameRef.removeRouteSprite(this);
   }
+
+  SpriteWithBlockSide? _spriteIsNeighbor(GameBlockSprite lastRouteSprite) {
+    if (lastRouteSprite is StartSprite) {
+      return gameRef.board.startSprite!.getRightNeighbor(gameRef) == this
+          ? SpriteWithBlockSide(lastRouteSprite, BlockSide.right)
+          : null;
+    }
+    return blockSides.values.map((blockSide) {
+      return SpriteWithBlockSide(
+          lastRouteSprite.getNeighbor(gameRef, blockSide), blockSide);
+    }).firstWhere((spriteWithBlockSide) {
+      return spriteWithBlockSide.sprite == this;
+    });
+  }
+}
+
+class SpriteWithBlockSide {
+  final GameBlockSprite sprite;
+  final BlockSide blockSide;
+
+  SpriteWithBlockSide(this.sprite, this.blockSide);
 }
 
 abstract class GameBlockSprite extends SpriteComponent
@@ -191,6 +213,10 @@ abstract class GameBlockSprite extends SpriteComponent
         return getBottomNeighbor(game);
     }
   }
+
+  List<BlockSide> getOpenBlockSides() {
+    return [];
+  }
 }
 
 class CrossSprite extends GameBlockSprite with RedLineAdder {
@@ -206,6 +232,11 @@ class CrossSprite extends GameBlockSprite with RedLineAdder {
   @override
   GameBlockSprite createRedLineSprite() {
     return RedLineSprite(block, orientation);
+  }
+
+  @override
+  List<BlockSide> getOpenBlockSides() {
+    return [BlockSide.left, BlockSide.right, BlockSide.top, BlockSide.bottom];
   }
 }
 
@@ -241,6 +272,20 @@ class TeeSprite extends GameBlockSprite
     super.onRotate();
     orientation = TeeOrientation.values[(orientation.index + 1) % 4];
   }
+
+  @override
+  List<BlockSide> getOpenBlockSides() {
+    if (orientation == TeeOrientation.top) {
+      return [BlockSide.left, BlockSide.top, BlockSide.right];
+    }
+    if (orientation == TeeOrientation.right) {
+      return [BlockSide.top, BlockSide.right, BlockSide.bottom];
+    }
+    if (orientation == TeeOrientation.bottom) {
+      return [BlockSide.right, BlockSide.bottom, BlockSide.left];
+    }
+    return [BlockSide.bottom, BlockSide.left, BlockSide.top];
+  }
 }
 
 enum CornerOrientation { topLeft, topRight, bottomRight, bottomLeft }
@@ -275,6 +320,20 @@ class CornerSprite extends GameBlockSprite
     super.onRotate();
     orientation = CornerOrientation.values[(orientation.index + 1) % 4];
   }
+
+  @override
+  List<BlockSide> getOpenBlockSides() {
+    if (orientation == CornerOrientation.topLeft) {
+      return [BlockSide.left, BlockSide.top];
+    }
+    if (orientation == CornerOrientation.topRight) {
+      return [BlockSide.top, BlockSide.right];
+    }
+    if (orientation == CornerOrientation.bottomRight) {
+      return [BlockSide.right, BlockSide.bottom];
+    }
+    return [BlockSide.bottom, BlockSide.left];
+  }
 }
 
 enum LineOrientation {
@@ -307,6 +366,14 @@ class LineSprite extends GameBlockSprite
         ? LineOrientation.vertical
         : LineOrientation.horizontal;
   }
+
+  @override
+  List<BlockSide> getOpenBlockSides() {
+    if (orientation == LineOrientation.horizontal) {
+      return [BlockSide.left, BlockSide.right];
+    }
+    return [BlockSide.top, BlockSide.bottom];
+  }
 }
 
 class BlockSprite extends GameBlockSprite {
@@ -315,6 +382,11 @@ class BlockSprite extends GameBlockSprite {
   @override
   String getSprite() {
     return 'block.png';
+  }
+
+  @override
+  List<BlockSide> getOpenBlockSides() {
+    return [];
   }
 }
 
@@ -325,6 +397,11 @@ class StartSprite extends GameBlockSprite {
   String getSprite() {
     return 'start.png';
   }
+
+  @override
+  List<BlockSide> getOpenBlockSides() {
+    return [BlockSide.right];
+  }
 }
 
 class ASprite extends GameBlockSprite {
@@ -334,6 +411,11 @@ class ASprite extends GameBlockSprite {
   String getSprite() {
     return 'a.png';
   }
+
+  @override
+  List<BlockSide> getOpenBlockSides() {
+    return [BlockSide.left];
+  }
 }
 
 class BSprite extends GameBlockSprite {
@@ -342,5 +424,10 @@ class BSprite extends GameBlockSprite {
   @override
   String getSprite() {
     return 'b.png';
+  }
+
+  @override
+  List<BlockSide> getOpenBlockSides() {
+    return [BlockSide.left];
   }
 }

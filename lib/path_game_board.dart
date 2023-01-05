@@ -27,6 +27,7 @@ class PathGameBoard {
         }
         if (block is EndBlock) {
           startSprite = StartSprite(block);
+          startSprite!.routeEnd = BlockSide.right;
           row.add(startSprite!);
         }
         if (block is StartBBlock) {

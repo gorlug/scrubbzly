@@ -93,6 +93,19 @@ enum BlockSide {
   top,
 }
 
+BlockSide getOppositeBlockSide(BlockSide side) {
+  switch (side) {
+    case BlockSide.left:
+      return BlockSide.right;
+    case BlockSide.right:
+      return BlockSide.left;
+    case BlockSide.bottom:
+      return BlockSide.top;
+    case BlockSide.top:
+      return BlockSide.bottom;
+  }
+}
+
 Map<int, BlockSide> blockSides = {
   0: BlockSide.top,
   1: BlockSide.right,
