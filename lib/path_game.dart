@@ -9,6 +9,7 @@ import 'package:jira_game/block.dart';
 import 'package:jira_game/path_game_board.dart';
 import 'package:flame/effects.dart';
 import 'package:jira_game/red_line_sprite.dart';
+import 'package:jira_game/redraw_red_line_to_green.dart';
 import 'package:jira_game/route_block.dart';
 
 final _defaultBoard = PathGameBoard(lengthX: 9, lengthY: 5);
@@ -99,6 +100,7 @@ class PathGame extends FlameGame
 
   void setGameFinished() {
     gameFinished = true;
+    redRawRedLineToGreen(routeSprites);
   }
 }
 
