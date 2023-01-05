@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/experimental.dart';
@@ -20,6 +22,7 @@ class PathGame extends FlameGame
   Set<Component> _horizontalDragComponents = {};
   List<GameBlockSprite> routeSprites = [];
   late PathGameBoard board;
+  bool gameFinished = false;
 
   PathGame({PathGameBoard? board}) {
     this.board = board ?? _defaultBoard;
@@ -59,6 +62,9 @@ class PathGame extends FlameGame
   }
 
   void onSecondary(Vector2 vector) {
+    if (gameFinished) {
+      return;
+    }
     final components = componentsAtPoint(vector);
     for (final component in components) {
       if (component is RedLineAdder) {
@@ -90,12 +96,19 @@ class PathGame extends FlameGame
   bool isLastRouteSprite(GameBlockSprite sprite) {
     return routeSprites.last == sprite;
   }
+
+  void setGameFinished() {
+    gameFinished = true;
+  }
 }
 
 mixin RotateComponent on GameBlockSprite {
   @override
   void onTapUp(TapUpEvent event) {
     super.onTapUp(event);
+    if (gameRef.gameFinished) {
+      return;
+    }
     onRotate();
   }
 
@@ -110,7 +123,6 @@ mixin RotateComponent on GameBlockSprite {
 
 mixin RedLineAdder on GameBlockSprite {
   void onSecondaryClick(GameBlockSprite lastRouteSprite) {
-    print('secondary');
     if (redLineSprite == null &&
         _isValidRouteAndSetRouteStartAndEnd(lastRouteSprite)) {
       addRedLine();
@@ -122,6 +134,9 @@ mixin RedLineAdder on GameBlockSprite {
   }
 
   void addRedLine() {
+    if (this is EndSprite) {
+      return;
+    }
     redLineSprite = createRedLineSprite();
     gameRef.add(redLineSprite!);
     gameRef.addRouteSprite(this);
@@ -130,6 +145,7 @@ mixin RedLineAdder on GameBlockSprite {
   GameBlockSprite createRedLineSprite();
 
   bool _isValidRouteAndSetRouteStartAndEnd(GameBlockSprite lastRouteSprite) {
+    print('lastRouteSprite $lastRouteSprite');
     final isNeighbor = _spriteIsNeighbor(lastRouteSprite);
     if (isNeighbor.sprite == null) {
       return false;
@@ -149,6 +165,9 @@ mixin RedLineAdder on GameBlockSprite {
     lastRouteSprite.routeEnd = isNeighbor.blockSide;
     if (lastRouteSprite is RedLineAdder) {
       lastRouteSprite.redLineRedraw();
+    }
+    if (this is EndSprite) {
+      (this as EndSprite).onRouteEnd();
     }
   }
 
@@ -478,30 +497,43 @@ class StartSprite extends GameBlockSprite {
   }
 }
 
-class ASprite extends GameBlockSprite {
+mixin EndSprite on RedLineAdder {
+  @override
+  List<BlockSide> getOpenBlockSides() {
+    return [BlockSide.left];
+  }
+
+  void onRouteEnd() {
+    print('onRouteEnd');
+    gameRef.setGameFinished();
+    final effect = ColorEffect(
+      const Color(0xFF00FF00),
+      const Offset(0.0, 0.4),
+      EffectController(duration: 0),
+    );
+    add(effect);
+  }
+
+  @override
+  GameBlockSprite createRedLineSprite() {
+    throw UnimplementedError();
+  }
+}
+
+class ASprite extends GameBlockSprite with RedLineAdder, EndSprite {
   ASprite(super.block);
 
   @override
   String getSprite() {
     return 'a.png';
   }
-
-  @override
-  List<BlockSide> getOpenBlockSides() {
-    return [BlockSide.left];
-  }
 }
 
-class BSprite extends GameBlockSprite {
+class BSprite extends GameBlockSprite with RedLineAdder, EndSprite {
   BSprite(super.block);
 
   @override
   String getSprite() {
     return 'b.png';
-  }
-
-  @override
-  List<BlockSide> getOpenBlockSides() {
-    return [BlockSide.left];
   }
 }
