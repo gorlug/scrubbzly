@@ -30,12 +30,11 @@ class RouteBlock extends GameBlock {
   BlockSide? end;
   bool isEndBlock;
 
-  RouteBlock(
-      {required super.x,
-      required super.y,
-      this.start = BlockSide.right,
-      this.end,
-      this.isEndBlock = false});
+  RouteBlock({required super.x,
+    required super.y,
+    this.start = BlockSide.right,
+    this.end,
+    this.isEndBlock = false});
 
   RouteBlock.fromOtherBlock(GameBlock otherBlock)
       : start = BlockSide.right,
@@ -83,6 +82,13 @@ class RouteBlock extends GameBlock {
   @override
   String toString() {
     return 'RouteBlock{x: $x, y: $y, start: $start, end: $end, isEndBlock: $isEndBlock}';
+  }
+
+  bool isCornerBlock() {
+    return toChar() == RouteChar.leftBottom.char ||
+        toChar() == RouteChar.leftTop.char ||
+        toChar() == RouteChar.rightBottom.char ||
+        toChar() == RouteChar.rightTop.char;
   }
 }
 
@@ -174,8 +180,8 @@ class NextBlockForRouteSelector {
         start: neighboringBlockSide[nextBlockWithBlockSide.blockSide]!);
   }
 
-  RouteBlock _returnCurrentBlockAsEndRouteBlock(
-      RouteBlock currentBlock, List<BlockWithBlockSide> validBlocks) {
+  RouteBlock _returnCurrentBlockAsEndRouteBlock(RouteBlock currentBlock,
+      List<BlockWithBlockSide> validBlocks) {
     final endBlockWithSide = _getEndBlock(validBlocks);
     currentBlock.isEndBlock = true;
     currentBlock.end = endBlockWithSide.blockSide;
@@ -189,9 +195,9 @@ class NextBlockForRouteSelector {
   List<BlockWithBlockSide> _getValidBlocks(RouteBlock currentBlock, Game game) {
     return blockSides.values
         .map((blockSide) {
-          final block = currentBlock.getNeighbor(game, blockSide);
-          return BlockWithBlockSide(block, blockSide);
-        })
+      final block = currentBlock.getNeighbor(game, blockSide);
+      return BlockWithBlockSide(block, blockSide);
+    })
         .where((blockWithBlockSide) => _isValidBlock(blockWithBlockSide.block))
         .toList();
   }
@@ -206,7 +212,7 @@ class NextBlockForRouteSelector {
 
   BlockWithBlockSide getRandomBlock(List<BlockWithBlockSide> validBlocks) {
     final randomIndex =
-        randomNumberGenerator.generateRandomNumber(validBlocks.length);
+    randomNumberGenerator.generateRandomNumber(validBlocks.length);
     return validBlocks[randomIndex];
   }
 }

@@ -12,10 +12,11 @@ class PathGameBoard {
 
   PathGameBoard({required int lengthX, required int lengthY}) {
     createBoard(lengthX, lengthY);
+    _addBRoute(lengthX, lengthY);
   }
 
   void createBoard(int lengthX, int lengthY) {
-    final game = _createGame(lengthX, lengthY);
+    final game = _createARouteGame(lengthX, lengthY);
     print(game.printBoard());
 
     for (var y = 0; y < game.board.length; y++) {
@@ -63,42 +64,55 @@ class PathGameBoard {
     row.add(sprite);
   }
 
-  Game _createGame(int lengthX, int lengthY) {
+  Game _createARouteGame(int lengthX, int lengthY) {
     final game = Game(lengthX: lengthX, lengthY: lengthY);
     final aBlock = game.startABlock;
     final leftOfABlock = aBlock.getLeftNeighbor(game);
+    _addRouteToGame(leftOfABlock, game);
+    return game;
+  }
+
+  Game _createBRouteGame(int lengthX, int lengthY) {
+    final game = Game(lengthX: lengthX, lengthY: lengthY);
+    final bBlock = game.startBBlock;
+    final leftOfBBlock = bBlock.getLeftNeighbor(game);
+    _addRouteToGame(leftOfBBlock, game);
+    return game;
+  }
+
+  void _addRouteToGame(GameBlock leftOfABlock, Game game) {
     final startRoute = RouteBlock.fromOtherBlock(leftOfABlock);
     final selector = NextBlockForRouteSelector();
     final route = Route(selector);
     route.calculateRoute(startRoute, game);
-    return game;
   }
 
   void _addRouteBlock(RouteBlock block, List<GameBlockSprite> row) {
-    if (block.toChar() == RouteChar.leftBottom.char ||
-        block.toChar() == RouteChar.leftTop.char ||
-        block.toChar() == RouteChar.rightBottom.char ||
-        block.toChar() == RouteChar.rightTop.char) {
+    final routeBlock = _createRouteBlock(block);
+    row.add(routeBlock);
+  }
+
+  GameBlockSprite _createRouteBlock(RouteBlock block) {
+    if (block.isCornerBlock()) {
       const spriteCreators = [
         createTeeSprite,
         createCornerSprite,
         createCrossSprite
       ];
-      final creator = spriteCreators[
-      randomNumber.generateRandomNumber(spriteCreators.length)];
-      row.add(creator(block.x, block.y));
+      return _createRandomBlock(spriteCreators, block.x, block.y);
     }
-    if (block.toChar() == RouteChar.leftRight.char ||
-        block.toChar() == RouteChar.topBottom.char) {
-      const spriteCreators = [
-        createTeeSprite,
-        createLineSprite,
-        createCrossSprite
-      ];
-      final creator = spriteCreators[
-      randomNumber.generateRandomNumber(spriteCreators.length)];
-      row.add(creator(block.x, block.y));
-    }
+    const spriteCreators = [
+      createTeeSprite,
+      createLineSprite,
+      createCrossSprite
+    ];
+    return _createRandomBlock(spriteCreators, block.x, block.y);
+  }
+
+  _createRandomBlock(List<CreateSprite> creators, int x, int y) {
+    final creator =
+        creators[randomNumber.generateRandomNumber(creators.length)];
+    return creator(x, y);
   }
 
   GameBlockSprite getBlock(int x, int y) {
@@ -111,6 +125,34 @@ class PathGameBoard {
 
   void addRow(List<GameBlockSprite> row) {
     _board.add(row);
+  }
+
+  void _addBRoute(int lengthX, int lengthY) {
+    final game = _createBRouteGame(lengthX, lengthY);
+    print(game.printBoard());
+
+    for (var y = 0; y < game.board.length; y++) {
+      final boardRow = game.board[y];
+      for (var x = 0; x < boardRow.length; x++) {
+        final gameBlock = boardRow[x];
+        if (gameBlock is RouteBlock) {
+          _checkIfRouteBlockNeedsModification(gameBlock, x, y);
+        }
+      }
+    }
+  }
+
+  void _checkIfRouteBlockNeedsModification(RouteBlock gameBlock, int x, int y) {
+    final currentBlock = _board[y][x];
+    if (currentBlock is BlockSprite) {
+      final routeBlock = _createRouteBlock(gameBlock);
+      _board[y][x] = routeBlock;
+    }
+    if (currentBlock is CornerSprite && !gameBlock.isCornerBlock() ||
+        currentBlock is LineSprite && gameBlock.isCornerBlock()) {
+      const spriteCreators = [createTeeSprite, createCrossSprite];
+      _board[y][x] = _createRandomBlock(spriteCreators, x, y);
+    }
   }
 }
 
@@ -129,7 +171,7 @@ CrossSprite createCrossSprite(int x, int y) =>
 
 LineSprite createLineSprite(int x, int y) {
   final orientation =
-  LineOrientation.values[randomNumber.generateRandomNumber(2)];
+      LineOrientation.values[randomNumber.generateRandomNumber(2)];
   return LineSprite(GameBlock(x: x, y: y), orientation: orientation);
 }
 
@@ -137,12 +179,12 @@ const randomNumber = RandomNumberGeneratorImpl();
 
 CornerSprite createCornerSprite(int x, int y) {
   final orientation =
-  CornerOrientation.values[randomNumber.generateRandomNumber(4)];
+      CornerOrientation.values[randomNumber.generateRandomNumber(4)];
   return CornerSprite(GameBlock(x: x, y: y), orientation: orientation);
 }
 
 TeeSprite createTeeSprite(int x, int y) {
   final teeOrientation =
-  TeeOrientation.values[randomNumber.generateRandomNumber(4)];
+      TeeOrientation.values[randomNumber.generateRandomNumber(4)];
   return TeeSprite(GameBlock(x: x, y: y), orientation: teeOrientation);
 }
