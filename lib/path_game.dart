@@ -249,7 +249,30 @@ abstract class GameBlockSprite extends SpriteComponent
   }
 }
 
-class CrossSprite extends GameBlockSprite with RedLineAdder {
+mixin CornerRouteStartEndLogic on RedLineAdder {
+  GameBlockSprite? getCornerRedLineSprite() {
+    if (routeStart == BlockSide.top && routeEnd == BlockSide.left ||
+        routeStart == BlockSide.left && routeEnd == BlockSide.top) {
+      return CornerRedLineSprite(block, CornerOrientation.topLeft);
+    }
+    if (routeStart == BlockSide.top && routeEnd == BlockSide.right ||
+        routeStart == BlockSide.right && routeEnd == BlockSide.top) {
+      return CornerRedLineSprite(block, CornerOrientation.topRight);
+    }
+    if (routeStart == BlockSide.bottom && routeEnd == BlockSide.right ||
+        routeStart == BlockSide.right && routeEnd == BlockSide.bottom) {
+      return CornerRedLineSprite(block, CornerOrientation.bottomRight);
+    }
+    if (routeStart == BlockSide.bottom && routeEnd == BlockSide.left ||
+        routeStart == BlockSide.left && routeEnd == BlockSide.bottom) {
+      return CornerRedLineSprite(block, CornerOrientation.bottomLeft);
+    }
+    return null;
+  }
+}
+
+class CrossSprite extends GameBlockSprite
+    with RedLineAdder, CornerRouteStartEndLogic {
   LineOrientation orientation = LineOrientation.horizontal;
 
   CrossSprite(super.block);
@@ -261,7 +284,11 @@ class CrossSprite extends GameBlockSprite with RedLineAdder {
 
   @override
   GameBlockSprite createRedLineSprite() {
-    if (routeStart! == BlockSide.left || routeStart! == BlockSide.right) {
+    final cornerSprite = getCornerRedLineSprite();
+    if (cornerSprite != null) {
+      return cornerSprite;
+    }
+    if (routeStart == BlockSide.left || routeStart == BlockSide.right) {
       return RedLineSprite(block, LineOrientation.horizontal);
     }
     return RedLineSprite(block, LineOrientation.vertical);
@@ -283,7 +310,7 @@ Map<TeeOrientation, double> teeTauValues = {
 };
 
 class TeeSprite extends GameBlockSprite
-    with RotateComponent, RedLineAdder, RotateTau4 {
+    with RotateComponent, RedLineAdder, RotateTau4, CornerRouteStartEndLogic {
   TeeOrientation orientation;
 
   TeeSprite(super.block, {this.orientation = TeeOrientation.top}) {
@@ -297,21 +324,9 @@ class TeeSprite extends GameBlockSprite
 
   @override
   GameBlockSprite createRedLineSprite() {
-    if (routeStart == BlockSide.top && routeEnd == BlockSide.left ||
-        routeStart == BlockSide.left && routeEnd == BlockSide.top) {
-      return CornerRedLineSprite(block, CornerOrientation.topLeft);
-    }
-    if (routeStart == BlockSide.top && routeEnd == BlockSide.right ||
-        routeStart == BlockSide.right && routeEnd == BlockSide.top) {
-      return CornerRedLineSprite(block, CornerOrientation.topRight);
-    }
-    if (routeStart == BlockSide.bottom && routeEnd == BlockSide.right ||
-        routeStart == BlockSide.right && routeEnd == BlockSide.bottom) {
-      return CornerRedLineSprite(block, CornerOrientation.bottomRight);
-    }
-    if (routeStart == BlockSide.bottom && routeEnd == BlockSide.left ||
-        routeStart == BlockSide.left && routeEnd == BlockSide.bottom) {
-      return CornerRedLineSprite(block, CornerOrientation.bottomLeft);
+    final cornerSprite = getCornerRedLineSprite();
+    if (cornerSprite != null) {
+      return cornerSprite;
     }
     if ((routeStart == BlockSide.bottom || routeStart == BlockSide.top) &&
         (orientation == TeeOrientation.right ||

@@ -68,4 +68,8 @@ class MockPathGameBoard extends PathGameBoard {
   getTeeSprite(int x, int y) {
     return TeeSprite(RouteBlock(x: x, y: y));
   }
+
+  getCrossSprite(int x, int y) {
+    return CrossSprite(RouteBlock(x: x, y: y));
+  }
 }
