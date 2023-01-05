@@ -5,7 +5,7 @@ import 'package:jira_game/path_game.dart';
 import 'mock_path_game_board.dart';
 
 void main() {
-  // runApp(GameWidget(game: PathGame()));
-  runApp(GameWidget(
-      game: PathGame(board: MockPathGameBoard(lengthX: 5, lengthY: 3))));
+  runApp(GameWidget(game: PathGame()));
+  // runApp(GameWidget(
+  //     game: PathGame(board: MockPathGameBoard(lengthX: 5, lengthY: 3))));
 }
