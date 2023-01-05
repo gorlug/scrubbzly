@@ -112,10 +112,12 @@ mixin RedLineAdder on GameBlockSprite {
   void onSecondaryClick(GameBlockSprite lastRouteSprite) {
     print('secondary');
     if (redLineSprite == null &&
-        _isValidRouteAndSetRouteStart(lastRouteSprite)) {
+        _isValidRouteAndSetRouteStartAndEnd(lastRouteSprite)) {
       addRedLine();
     } else if (redLineSprite != null && gameRef.isLastRouteSprite(this)) {
       _removeRedLine();
+      routeStart = null;
+      routeEnd = null;
     }
   }
 
@@ -127,7 +129,7 @@ mixin RedLineAdder on GameBlockSprite {
 
   GameBlockSprite createRedLineSprite();
 
-  bool _isValidRouteAndSetRouteStart(GameBlockSprite lastRouteSprite) {
+  bool _isValidRouteAndSetRouteStartAndEnd(GameBlockSprite lastRouteSprite) {
     final isNeighbor = _spriteIsNeighbor(lastRouteSprite);
     if (isNeighbor.sprite == null) {
       return false;
@@ -135,10 +137,19 @@ mixin RedLineAdder on GameBlockSprite {
     var oppositeBlockSide = getOppositeBlockSide(isNeighbor.blockSide);
     if (getOpenBlockSides().contains(oppositeBlockSide) &&
         lastRouteSprite.isBlockSideOpen(isNeighbor.blockSide)) {
-      routeStart = oppositeBlockSide;
+      _updateRouteStartAndEnd(oppositeBlockSide, lastRouteSprite, isNeighbor);
       return true;
     }
     return false;
+  }
+
+  void _updateRouteStartAndEnd(BlockSide oppositeBlockSide,
+      GameBlockSprite lastRouteSprite, SpriteWithBlockSide isNeighbor) {
+    routeStart = oppositeBlockSide;
+    lastRouteSprite.routeEnd = isNeighbor.blockSide;
+    if (lastRouteSprite is RedLineAdder) {
+      lastRouteSprite.redLineRedraw();
+    }
   }
 
   void _removeRedLine() {
@@ -159,6 +170,11 @@ mixin RedLineAdder on GameBlockSprite {
     }).firstWhere((spriteWithBlockSide) {
       return spriteWithBlockSide.sprite == this;
     }, orElse: () => SpriteWithBlockSide(null, BlockSide.right));
+  }
+
+  void redLineRedraw() {
+    _removeRedLine();
+    addRedLine();
   }
 }
 
@@ -281,6 +297,32 @@ class TeeSprite extends GameBlockSprite
 
   @override
   GameBlockSprite createRedLineSprite() {
+    if (routeStart == BlockSide.top && routeEnd == BlockSide.left ||
+        routeStart == BlockSide.left && routeEnd == BlockSide.top) {
+      return CornerRedLineSprite(block, CornerOrientation.topLeft);
+    }
+    if (routeStart == BlockSide.top && routeEnd == BlockSide.right ||
+        routeStart == BlockSide.right && routeEnd == BlockSide.top) {
+      return CornerRedLineSprite(block, CornerOrientation.topRight);
+    }
+    if (routeStart == BlockSide.bottom && routeEnd == BlockSide.right ||
+        routeStart == BlockSide.right && routeEnd == BlockSide.bottom) {
+      return CornerRedLineSprite(block, CornerOrientation.bottomRight);
+    }
+    if (routeStart == BlockSide.bottom && routeEnd == BlockSide.left ||
+        routeStart == BlockSide.left && routeEnd == BlockSide.bottom) {
+      return CornerRedLineSprite(block, CornerOrientation.bottomLeft);
+    }
+    if ((routeStart == BlockSide.bottom || routeStart == BlockSide.top) &&
+        (orientation == TeeOrientation.right ||
+            orientation == TeeOrientation.left)) {
+      return RedLineSprite(block, LineOrientation.vertical);
+    }
+    if ((routeStart == BlockSide.left || routeStart == BlockSide.right) &&
+        (orientation == TeeOrientation.top ||
+            orientation == TeeOrientation.bottom)) {
+      return RedLineSprite(block, LineOrientation.horizontal);
+    }
     return TShortRedLineSprite(block, orientation);
   }
 

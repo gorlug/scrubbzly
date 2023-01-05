@@ -13,7 +13,7 @@ class RedLineSprite extends GameBlockSprite {
 
   @override
   Future<void>? onLoad() async {
-    super.onLoad();
+    await super.onLoad();
 
     if (orientation == LineOrientation.vertical) {
       final effect = RotateEffect.by(
@@ -47,7 +47,7 @@ class CornerRedLineSprite extends GameBlockSprite with RotateTau4 {
 
   @override
   Future<void>? onLoad() async {
-    super.onLoad();
+    await super.onLoad();
 
     if (orientation == CornerOrientation.topRight) {
       rotateTau(tau / 4);
