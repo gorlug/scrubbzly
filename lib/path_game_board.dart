@@ -11,6 +11,10 @@ class PathGameBoard {
   StartSprite? startSprite;
 
   PathGameBoard({required int lengthX, required int lengthY}) {
+    createBoard(lengthX, lengthY);
+  }
+
+  void createBoard(int lengthX, int lengthY) {
     final game = _createGame(lengthX, lengthY);
     print(game.printBoard());
 
@@ -81,7 +85,7 @@ class PathGameBoard {
         createCrossSprite
       ];
       final creator = spriteCreators[
-          randomNumber.generateRandomNumber(spriteCreators.length)];
+      randomNumber.generateRandomNumber(spriteCreators.length)];
       row.add(creator(block.x, block.y));
     }
     if (block.toChar() == RouteChar.leftRight.char ||
@@ -92,13 +96,21 @@ class PathGameBoard {
         createCrossSprite
       ];
       final creator = spriteCreators[
-          randomNumber.generateRandomNumber(spriteCreators.length)];
+      randomNumber.generateRandomNumber(spriteCreators.length)];
       row.add(creator(block.x, block.y));
     }
   }
 
   GameBlockSprite getBlock(int x, int y) {
     return _board[y][x];
+  }
+
+  void addBlock(int x, int y, GameBlockSprite block) {
+    _board[y][x] = block;
+  }
+
+  void addRow(List<GameBlockSprite> row) {
+    _board.add(row);
   }
 }
 
@@ -117,7 +129,7 @@ CrossSprite createCrossSprite(int x, int y) =>
 
 LineSprite createLineSprite(int x, int y) {
   final orientation =
-      LineOrientation.values[randomNumber.generateRandomNumber(2)];
+  LineOrientation.values[randomNumber.generateRandomNumber(2)];
   return LineSprite(GameBlock(x: x, y: y), orientation: orientation);
 }
 
@@ -125,12 +137,12 @@ const randomNumber = RandomNumberGeneratorImpl();
 
 CornerSprite createCornerSprite(int x, int y) {
   final orientation =
-      CornerOrientation.values[randomNumber.generateRandomNumber(4)];
+  CornerOrientation.values[randomNumber.generateRandomNumber(4)];
   return CornerSprite(GameBlock(x: x, y: y), orientation: orientation);
 }
 
 TeeSprite createTeeSprite(int x, int y) {
   final teeOrientation =
-      TeeOrientation.values[randomNumber.generateRandomNumber(4)];
+  TeeOrientation.values[randomNumber.generateRandomNumber(4)];
   return TeeSprite(GameBlock(x: x, y: y), orientation: teeOrientation);
 }

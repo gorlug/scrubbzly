@@ -9,6 +9,8 @@ import 'package:flame/effects.dart';
 import 'package:jira_game/red_line_sprite.dart';
 import 'package:jira_game/route_block.dart';
 
+final _defaultBoard = PathGameBoard(lengthX: 9, lengthY: 5);
+
 class PathGame extends FlameGame
     with
         HasTappableComponents,
@@ -19,11 +21,14 @@ class PathGame extends FlameGame
   List<GameBlockSprite> routeSprites = [];
   late PathGameBoard board;
 
+  PathGame({PathGameBoard? board}) {
+    this.board = board ?? _defaultBoard;
+  }
+
   @override
   Future<void>? onLoad() async {
     super.onLoad();
 
-    board = PathGameBoard(lengthX: 9, lengthY: 5);
     board.addToGame(this);
     routeSprites.add(board.startSprite!);
   }
@@ -128,7 +133,8 @@ mixin RedLineAdder on GameBlockSprite {
       return false;
     }
     var oppositeBlockSide = getOppositeBlockSide(isNeighbor.blockSide);
-    if (getOpenBlockSides().contains(oppositeBlockSide)) {
+    if (getOpenBlockSides().contains(oppositeBlockSide) &&
+        lastRouteSprite.isBlockSideOpen(isNeighbor.blockSide)) {
       routeStart = oppositeBlockSide;
       return true;
     }
@@ -219,6 +225,11 @@ abstract class GameBlockSprite extends SpriteComponent
 
   List<BlockSide> getOpenBlockSides() {
     return [];
+  }
+
+  bool isBlockSideOpen(BlockSide blockSide) {
+    print('blockSide $blockSide, ${getOpenBlockSides()}');
+    return getOpenBlockSides().contains(blockSide);
   }
 }
 
