@@ -75,14 +75,22 @@ class PathGameBoard {
         block.toChar() == RouteChar.leftTop.char ||
         block.toChar() == RouteChar.rightBottom.char ||
         block.toChar() == RouteChar.rightTop.char) {
-      const spriteCreators = [createTeeSprite, createCornerSprite];
+      const spriteCreators = [
+        createTeeSprite,
+        createCornerSprite,
+        createCrossSprite
+      ];
       final creator = spriteCreators[
           randomNumber.generateRandomNumber(spriteCreators.length)];
       row.add(creator(block.x, block.y));
     }
     if (block.toChar() == RouteChar.leftRight.char ||
         block.toChar() == RouteChar.topBottom.char) {
-      const spriteCreators = [createTeeSprite, createLineSprite];
+      const spriteCreators = [
+        createTeeSprite,
+        createLineSprite,
+        createCrossSprite
+      ];
       final creator = spriteCreators[
           randomNumber.generateRandomNumber(spriteCreators.length)];
       row.add(creator(block.x, block.y));
@@ -97,12 +105,15 @@ class PathGameBoard {
 typedef CreateSprite = GameBlockSprite Function(int x, int y);
 
 Map<int, CreateSprite> sprites = {
-  0: (x, y) => CrossSprite(GameBlock(x: x, y: y)),
+  0: (x, y) => createCrossSprite(x, y),
   1: (x, y) => createTeeSprite(x, y),
   2: (x, y) => createCornerSprite(x, y),
   3: (x, y) => createLineSprite(x, y),
   4: (x, y) => BlockSprite(GameBlock(x: x, y: y)),
 };
+
+CrossSprite createCrossSprite(int x, int y) =>
+    CrossSprite(GameBlock(x: x, y: y));
 
 LineSprite createLineSprite(int x, int y) {
   final orientation =

@@ -75,7 +75,7 @@ class TShortRedLineSprite extends GameBlockSprite with RotateTau4 {
 
   @override
   Future<void>? onLoad() async {
-    super.onLoad();
+    await super.onLoad();
 
     if (orientation == TeeOrientation.right) {
       rotateTau(tau / 4);

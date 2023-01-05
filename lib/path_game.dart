@@ -106,7 +106,8 @@ mixin RotateComponent on GameBlockSprite {
 mixin RedLineAdder on GameBlockSprite {
   void onSecondaryClick(GameBlockSprite lastRouteSprite) {
     print('secondary');
-    if (redLineSprite == null && _isValidRouteAndSetRouteEnd(lastRouteSprite)) {
+    if (redLineSprite == null &&
+        _isValidRouteAndSetRouteStart(lastRouteSprite)) {
       addRedLine();
     } else if (redLineSprite != null && gameRef.isLastRouteSprite(this)) {
       _removeRedLine();
@@ -121,13 +122,14 @@ mixin RedLineAdder on GameBlockSprite {
 
   GameBlockSprite createRedLineSprite();
 
-  bool _isValidRouteAndSetRouteEnd(GameBlockSprite lastRouteSprite) {
+  bool _isValidRouteAndSetRouteStart(GameBlockSprite lastRouteSprite) {
     final isNeighbor = _spriteIsNeighbor(lastRouteSprite);
-    if (isNeighbor == null) {
+    if (isNeighbor.sprite == null) {
       return false;
     }
-    if (getOpenBlockSides()
-        .contains(getOppositeBlockSide(isNeighbor.blockSide))) {
+    var oppositeBlockSide = getOppositeBlockSide(isNeighbor.blockSide);
+    if (getOpenBlockSides().contains(oppositeBlockSide)) {
+      routeStart = oppositeBlockSide;
       return true;
     }
     return false;
@@ -139,23 +141,23 @@ mixin RedLineAdder on GameBlockSprite {
     gameRef.removeRouteSprite(this);
   }
 
-  SpriteWithBlockSide? _spriteIsNeighbor(GameBlockSprite lastRouteSprite) {
+  SpriteWithBlockSide _spriteIsNeighbor(GameBlockSprite lastRouteSprite) {
     if (lastRouteSprite is StartSprite) {
       return gameRef.board.startSprite!.getRightNeighbor(gameRef) == this
           ? SpriteWithBlockSide(lastRouteSprite, BlockSide.right)
-          : null;
+          : SpriteWithBlockSide(null, BlockSide.right);
     }
     return blockSides.values.map((blockSide) {
       return SpriteWithBlockSide(
           lastRouteSprite.getNeighbor(gameRef, blockSide), blockSide);
     }).firstWhere((spriteWithBlockSide) {
       return spriteWithBlockSide.sprite == this;
-    });
+    }, orElse: () => SpriteWithBlockSide(null, BlockSide.right));
   }
 }
 
 class SpriteWithBlockSide {
-  final GameBlockSprite sprite;
+  final GameBlockSprite? sprite;
   final BlockSide blockSide;
 
   SpriteWithBlockSide(this.sprite, this.blockSide);
@@ -167,13 +169,14 @@ abstract class GameBlockSprite extends SpriteComponent
   final double defaultWidth = 100;
   final double defaultHeight = 100;
   GameBlockSprite? redLineSprite;
+  BlockSide? routeStart;
   BlockSide? routeEnd;
 
   GameBlockSprite(this.block);
 
   @override
   Future<void>? onLoad() async {
-    super.onLoad();
+    await super.onLoad();
 
     sprite = await gameRef.loadSprite(getSprite());
     position = Vector2(block.x * defaultWidth + defaultWidth / 2,
@@ -231,7 +234,10 @@ class CrossSprite extends GameBlockSprite with RedLineAdder {
 
   @override
   GameBlockSprite createRedLineSprite() {
-    return RedLineSprite(block, orientation);
+    if (routeStart! == BlockSide.left || routeStart! == BlockSide.right) {
+      return RedLineSprite(block, LineOrientation.horizontal);
+    }
+    return RedLineSprite(block, LineOrientation.vertical);
   }
 
   @override
