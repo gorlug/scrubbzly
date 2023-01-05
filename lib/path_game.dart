@@ -16,7 +16,7 @@ class PathGame extends FlameGame
         SecondaryTapDetector,
         LongPressDetector {
   Set<Component> _horizontalDragComponents = {};
-  late GameBlockSprite lastRouteSprite;
+  List<GameBlockSprite> routeSprites = [];
   late PathGameBoard board;
 
   @override
@@ -25,7 +25,7 @@ class PathGame extends FlameGame
 
     board = PathGameBoard(lengthX: 9, lengthY: 5);
     board.addToGame(this);
-    lastRouteSprite = board.startSprite!;
+    routeSprites.add(board.startSprite!);
   }
 
   @override
@@ -57,7 +57,7 @@ class PathGame extends FlameGame
     final components = componentsAtPoint(vector);
     for (final component in components) {
       if (component is RedLineAdder) {
-        component.onSecondaryClick(lastRouteSprite);
+        component.onSecondaryClick(routeSprites.last);
       }
     }
   }
@@ -70,6 +70,20 @@ class PathGame extends FlameGame
 
   GameBlockSprite getBlock(int x, int y) {
     return board.getBlock(x, y);
+  }
+
+  void removeRouteSprite(GameBlockSprite sprite) {
+    if (isLastRouteSprite(sprite)) {
+      routeSprites.removeLast();
+    }
+  }
+
+  void addRouteSprite(GameBlockSprite sprite) {
+    routeSprites.add(sprite);
+  }
+
+  bool isLastRouteSprite(GameBlockSprite sprite) {
+    return routeSprites.last == sprite;
   }
 }
 
@@ -91,21 +105,18 @@ mixin RotateComponent on GameBlockSprite {
 
 mixin RedLineAdder on GameBlockSprite {
   void onSecondaryClick(GameBlockSprite lastRouteSprite) {
-    if (_isValidRoute(lastRouteSprite)) {
+    print('secondary');
+    if (redLineSprite == null && _isValidRoute(lastRouteSprite)) {
       addRedLine();
-      gameRef.lastRouteSprite = this;
+    } else if (redLineSprite != null && gameRef.isLastRouteSprite(this)) {
+      _removeRedLine();
     }
   }
 
   void addRedLine() {
-    print('secondary');
-    if (redLineSprite == null) {
-      redLineSprite = createRedLineSprite();
-      gameRef.add(redLineSprite!);
-    } else {
-      gameRef.remove(redLineSprite!);
-      redLineSprite = null;
-    }
+    redLineSprite = createRedLineSprite();
+    gameRef.add(redLineSprite!);
+    gameRef.addRouteSprite(this);
   }
 
   GameBlockSprite createRedLineSprite();
@@ -119,6 +130,12 @@ mixin RedLineAdder on GameBlockSprite {
       return lastRouteSprite.getNeighbor(gameRef, blockSide);
     }).toList();
     return validSprites.contains(this);
+  }
+
+  void _removeRedLine() {
+    gameRef.remove(redLineSprite!);
+    redLineSprite = null;
+    gameRef.removeRouteSprite(this);
   }
 }
 
