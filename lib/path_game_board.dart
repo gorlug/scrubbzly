@@ -8,6 +8,7 @@ import 'game.dart';
 
 class PathGameBoard {
   final List<List<GameBlockSprite>> _board = [];
+  StartSprite? startSprite;
 
   PathGameBoard({required int lengthX, required int lengthY}) {
     final game = _createGame(lengthX, lengthY);
@@ -25,7 +26,8 @@ class PathGameBoard {
           row.add(ASprite(block));
         }
         if (block is EndBlock) {
-          row.add(StartSprite(block));
+          startSprite = StartSprite(block);
+          row.add(startSprite!);
         }
         if (block is StartBBlock) {
           row.add(BSprite(block));
@@ -84,6 +86,10 @@ class PathGameBoard {
           randomNumber.generateRandomNumber(spriteCreators.length)];
       row.add(creator(block.x, block.y));
     }
+  }
+
+  GameBlockSprite getBlock(int x, int y) {
+    return _board[y][x];
   }
 }
 

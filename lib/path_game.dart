@@ -7,6 +7,7 @@ import 'package:jira_game/block.dart';
 import 'package:jira_game/path_game_board.dart';
 import 'package:flame/effects.dart';
 import 'package:jira_game/red_line_sprite.dart';
+import 'package:jira_game/route_block.dart';
 
 class PathGame extends FlameGame
     with
@@ -15,13 +16,16 @@ class PathGame extends FlameGame
         SecondaryTapDetector,
         LongPressDetector {
   Set<Component> _horizontalDragComponents = {};
+  late GameBlockSprite lastRouteSprite;
+  late PathGameBoard board;
 
   @override
   Future<void>? onLoad() async {
     super.onLoad();
 
-    final board = PathGameBoard(lengthX: 9, lengthY: 5);
+    board = PathGameBoard(lengthX: 9, lengthY: 5);
     board.addToGame(this);
+    lastRouteSprite = board.startSprite!;
   }
 
   @override
@@ -52,8 +56,8 @@ class PathGame extends FlameGame
   void onSecondary(Vector2 vector) {
     final components = componentsAtPoint(vector);
     for (final component in components) {
-      if (component is GameBlockSprite) {
-        component.onSecondaryClick();
+      if (component is RedLineAdder) {
+        component.onSecondaryClick(lastRouteSprite);
       }
     }
   }
@@ -62,6 +66,10 @@ class PathGame extends FlameGame
   void onLongPressStart(LongPressStartInfo info) {
     super.onLongPressStart(info);
     onSecondary(info.eventPosition.game);
+  }
+
+  GameBlockSprite getBlock(int x, int y) {
+    return board.getBlock(x, y);
   }
 }
 
@@ -82,9 +90,11 @@ mixin RotateComponent on GameBlockSprite {
 }
 
 mixin RedLineAdder on GameBlockSprite {
-  @override
-  void onSecondaryClick() {
-    addRedLine();
+  void onSecondaryClick(GameBlockSprite lastRouteSprite) {
+    if (_isValidRoute(lastRouteSprite)) {
+      addRedLine();
+      gameRef.lastRouteSprite = this;
+    }
   }
 
   void addRedLine() {
@@ -99,6 +109,17 @@ mixin RedLineAdder on GameBlockSprite {
   }
 
   GameBlockSprite createRedLineSprite();
+
+  bool _isValidRoute(GameBlockSprite lastRouteSprite) {
+    if (lastRouteSprite is StartSprite) {
+      return gameRef.board.startSprite!.getRightNeighbor(gameRef) == this;
+    }
+    final List<GameBlockSprite> validSprites =
+        blockSides.values.map((blockSide) {
+      return lastRouteSprite.getNeighbor(gameRef, blockSide);
+    }).toList();
+    return validSprites.contains(this);
+  }
 }
 
 abstract class GameBlockSprite extends SpriteComponent
@@ -107,6 +128,7 @@ abstract class GameBlockSprite extends SpriteComponent
   final double defaultWidth = 100;
   final double defaultHeight = 100;
   GameBlockSprite? redLineSprite;
+  BlockSide? routeEnd;
 
   GameBlockSprite(this.block);
 
@@ -124,7 +146,34 @@ abstract class GameBlockSprite extends SpriteComponent
 
   String getSprite();
 
-  void onSecondaryClick() {}
+  GameBlockSprite getRightNeighbor(PathGame game) {
+    return game.getBlock(block.x + 1, block.y);
+  }
+
+  GameBlockSprite getLeftNeighbor(PathGame game) {
+    return game.getBlock(block.x - 1, block.y);
+  }
+
+  GameBlockSprite getTopNeighbor(PathGame game) {
+    return game.getBlock(block.x, block.y - 1);
+  }
+
+  GameBlockSprite getBottomNeighbor(PathGame game) {
+    return game.getBlock(block.x, block.y + 1);
+  }
+
+  GameBlockSprite getNeighbor(PathGame game, BlockSide side) {
+    switch (side) {
+      case BlockSide.right:
+        return getRightNeighbor(game);
+      case BlockSide.left:
+        return getLeftNeighbor(game);
+      case BlockSide.top:
+        return getTopNeighbor(game);
+      case BlockSide.bottom:
+        return getBottomNeighbor(game);
+    }
+  }
 }
 
 class CrossSprite extends GameBlockSprite with RedLineAdder {

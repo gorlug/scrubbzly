@@ -2,6 +2,7 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/geometry.dart';
 import 'package:jira_game/path_game.dart';
+import 'package:jira_game/route_block.dart';
 
 import 'block.dart';
 
@@ -13,7 +14,6 @@ class RedLineSprite extends GameBlockSprite {
   @override
   Future<void>? onLoad() async {
     super.onLoad();
-    print('on load $orientation');
 
     if (orientation == LineOrientation.vertical) {
       final effect = RotateEffect.by(
