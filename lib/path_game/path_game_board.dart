@@ -52,7 +52,10 @@ class PathGameBoard {
   void addToGame(PathGame game) {
     for (var y = 0; y < _board.length; y++) {
       for (var x = 0; x < _board[y].length; x++) {
-        game.add(_board[y][x]);
+        final block = _board[y][x];
+        if (block.parent == null) {
+          game.add(block);
+        }
       }
     }
   }

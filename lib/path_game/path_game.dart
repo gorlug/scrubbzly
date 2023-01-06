@@ -25,6 +25,7 @@ class PathGame extends FlameGame
   List<GameBlockSprite> routeSprites = [];
   late PathGameBoard board;
   bool gameFinished = false;
+  bool finishedLoading = false;
 
   PathGame({PathGameBoard? board}) {
     this.board = board ?? _defaultBoard;
@@ -32,10 +33,15 @@ class PathGame extends FlameGame
 
   @override
   Future<void>? onLoad() async {
-    super.onLoad();
+    await super.onLoad();
 
+    print('bbq onLoad $finishedLoading');
+    if (finishedLoading) {
+      return;
+    }
     board.addToGame(this);
     routeSprites.add(board.startSprite!);
+    finishedLoading = true;
   }
 
   @override
