@@ -1,7 +1,6 @@
-import 'package:jira_game/block.dart';
-import 'package:jira_game/route_block.dart';
 import 'package:test/test.dart';
 
+import 'block.dart';
 import 'game.dart';
 
 void main() {

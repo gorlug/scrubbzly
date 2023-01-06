@@ -1,4 +1,4 @@
-import 'package:jira_game/block.dart';
+import 'block.dart';
 
 class Game {
   final List<List<GameBlock>> _board = [];

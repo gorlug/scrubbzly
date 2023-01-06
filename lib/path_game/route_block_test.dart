@@ -1,9 +1,9 @@
-import 'package:jira_game/block.dart';
-import 'package:jira_game/random_number_generator.dart';
-import 'package:jira_game/route_block.dart';
 import 'package:test/test.dart';
 
+import 'block.dart';
 import 'game.dart';
+import 'random_number_generator.dart';
+import 'route_block.dart';
 
 void expectRouteChar(BlockSide start, BlockSide end, String expectedChar) {
   final block = RouteBlock(start: start, x: 0, y: 0);

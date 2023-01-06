@@ -1,10 +1,9 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/geometry.dart';
-import 'package:jira_game/path_game.dart';
-import 'package:jira_game/route_block.dart';
 
 import 'block.dart';
+import 'path_game.dart';
 
 class RedLineSprite extends GameBlockSprite {
   final LineOrientation orientation;

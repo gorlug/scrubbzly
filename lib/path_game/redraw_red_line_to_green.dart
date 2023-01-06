@@ -1,7 +1,8 @@
 import 'dart:ui';
 
 import 'package:flame/effects.dart';
-import 'package:jira_game/path_game.dart';
+
+import 'path_game.dart';
 
 void redRawRedLineToGreen(List<GameBlockSprite> routeSprites) {
   for (var route in routeSprites) {

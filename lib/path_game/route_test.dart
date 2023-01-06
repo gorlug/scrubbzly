@@ -1,10 +1,9 @@
-import 'package:jira_game/route.dart';
-import 'package:jira_game/route_block.dart';
-import 'package:jira_game/route_block_test.dart';
 import 'package:test/test.dart';
 
 import 'block.dart';
 import 'game.dart';
+import 'route.dart';
+import 'route_block.dart';
 
 void main() {
   group('Route', () {

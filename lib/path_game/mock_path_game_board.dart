@@ -1,8 +1,7 @@
-import 'package:jira_game/path_game.dart';
-import 'package:jira_game/path_game_board.dart';
-import 'package:jira_game/route_block.dart';
-
 import 'block.dart';
+import 'path_game.dart';
+import 'path_game_board.dart';
+import 'route_block.dart';
 
 class MockPathGameBoard extends PathGameBoard {
   MockPathGameBoard({required super.lengthX, required super.lengthY});

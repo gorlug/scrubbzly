@@ -1,10 +1,9 @@
-import 'package:jira_game/path_game.dart';
-import 'package:jira_game/random_number_generator.dart';
-import 'package:jira_game/route.dart';
-import 'package:jira_game/route_block.dart';
-
 import 'block.dart';
 import 'game.dart';
+import 'path_game.dart';
+import 'random_number_generator.dart';
+import 'route.dart';
+import 'route_block.dart';
 
 class PathGameBoard {
   final List<List<GameBlockSprite>> _board = [];
