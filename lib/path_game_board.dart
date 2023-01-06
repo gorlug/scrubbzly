@@ -39,6 +39,7 @@ class PathGameBoard {
           row.add(BSprite(block));
         }
         if (block is EmptyBlock) {
+          // row.add(BlockSprite(block));
           _addRandomSprite(row, x, y);
         }
         if (block is RouteBlock) {
@@ -58,10 +59,12 @@ class PathGameBoard {
   }
 
   void _addRandomSprite(List<GameBlockSprite> row, int x, int y) {
-    final index = const RandomNumberGeneratorImpl()
-        .generateRandomNumber(sprites.values.length);
-    final sprite = sprites.values.elementAt(index)(x, y);
-    row.add(sprite);
+    // final index = const RandomNumberGeneratorImpl()
+    //     .generateRandomNumber(sprites.values.length);
+    // final sprite = sprites.values.elementAt(index)(x, y);
+    const spriteCreators = [createCornerSprite, createBlockSprite];
+    final randomBlock = _createRandomBlock(spriteCreators, x, y);
+    row.add(randomBlock);
   }
 
   Game _createARouteGame(int lengthX, int lengthY) {
@@ -97,14 +100,14 @@ class PathGameBoard {
       const spriteCreators = [
         createTeeSprite,
         createCornerSprite,
-        createCrossSprite
+        // createCrossSprite
       ];
       return _createRandomBlock(spriteCreators, block.x, block.y);
     }
     const spriteCreators = [
       createTeeSprite,
       createLineSprite,
-      createCrossSprite
+      // createCrossSprite
     ];
     return _createRandomBlock(spriteCreators, block.x, block.y);
   }
@@ -150,8 +153,9 @@ class PathGameBoard {
     }
     if (currentBlock is CornerSprite && !gameBlock.isCornerBlock() ||
         currentBlock is LineSprite && gameBlock.isCornerBlock()) {
-      const spriteCreators = [createTeeSprite, createCrossSprite];
-      _board[y][x] = _createRandomBlock(spriteCreators, x, y);
+      // const spriteCreators = [createTeeSprite, createCrossSprite];
+      // _board[y][x] = _createRandomBlock(spriteCreators, x, y);
+      _board[y][x] = createTeeSprite(x, y);
     }
   }
 }
@@ -163,8 +167,11 @@ Map<int, CreateSprite> sprites = {
   1: (x, y) => createTeeSprite(x, y),
   2: (x, y) => createCornerSprite(x, y),
   3: (x, y) => createLineSprite(x, y),
-  4: (x, y) => BlockSprite(GameBlock(x: x, y: y)),
+  4: (x, y) => createBlockSprite(x, y),
 };
+
+BlockSprite createBlockSprite(int x, int y) =>
+    BlockSprite(GameBlock(x: x, y: y));
 
 CrossSprite createCrossSprite(int x, int y) =>
     CrossSprite(GameBlock(x: x, y: y));

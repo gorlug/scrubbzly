@@ -12,7 +12,7 @@ import 'package:jira_game/red_line_sprite.dart';
 import 'package:jira_game/redraw_red_line_to_green.dart';
 import 'package:jira_game/route_block.dart';
 
-final _defaultBoard = PathGameBoard(lengthX: 9, lengthY: 5);
+final _defaultBoard = PathGameBoard(lengthX: 9, lengthY: 10);
 
 class PathGame extends FlameGame
     with
@@ -209,8 +209,8 @@ class SpriteWithBlockSide {
 abstract class GameBlockSprite extends SpriteComponent
     with HasGameRef<PathGame>, TapCallbacks {
   GameBlock block;
-  final double defaultWidth = 100;
-  final double defaultHeight = 100;
+  final double defaultWidth = 75;
+  final double defaultHeight = 75;
   GameBlockSprite? redLineSprite;
   BlockSide? routeStart;
   BlockSide? routeEnd;
