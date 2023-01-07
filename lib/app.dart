@@ -1,4 +1,4 @@
-import 'dart:html';
+// import 'dart:html';
 
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,7 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    document.onContextMenu.listen((event) => event.preventDefault());
+    // document.onContextMenu.listen((event) => event.preventDefault());
   }
 
   @override
@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Jira Game'),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
