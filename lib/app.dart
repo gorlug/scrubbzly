@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:jira_game/path_game/path_game.dart';
@@ -10,6 +12,12 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  @override
+  void initState() {
+    super.initState();
+    document.onContextMenu.listen((event) => event.preventDefault());
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
