@@ -13,6 +13,15 @@ import 'redraw_red_line_to_green.dart';
 import 'route_block.dart';
 import 'red_line_sprite.dart';
 
+const double defaultWidth = 60;
+const double defaultHeight = 60;
+
+const boardLengthX = 9;
+const boardLengthY = 8;
+
+const double gameWidth = defaultWidth * (boardLengthX + 2);
+const double gameHeight = defaultHeight * (boardLengthY + 2);
+
 class PathGame extends FlameGame
     with
         HasTappableComponents,
@@ -30,7 +39,7 @@ class PathGame extends FlameGame
   Future<void>? onLoad() async {
     await super.onLoad();
 
-    board = PathGameBoard(lengthX: 9, lengthY: 8);
+    board = PathGameBoard(lengthX: boardLengthX, lengthY: boardLengthY);
     board.addToGame(this);
     routeSprites.add(board.startSprite!);
   }
@@ -207,8 +216,6 @@ class SpriteWithBlockSide {
 abstract class GameBlockSprite extends SpriteComponent
     with HasGameRef<PathGame>, TapCallbacks {
   GameBlock block;
-  final double defaultWidth = 60;
-  final double defaultHeight = 60;
   GameBlockSprite? redLineSprite;
   BlockSide? routeStart;
   BlockSide? routeEnd;

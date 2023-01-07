@@ -51,7 +51,15 @@ class _HomePageState extends State<HomePage> {
               const Text('Hello World'),
             ],
           ),
-          Expanded(child: GameWidget(game: PathGame()))
+          SizedBox(
+              width: gameWidth,
+              height: gameHeight,
+              child: GameWidget(game: PathGame())),
+          Row(
+            children: [
+              const Text('Hello World'),
+            ],
+          ),
         ],
       ),
     );
