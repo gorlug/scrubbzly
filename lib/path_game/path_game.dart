@@ -16,8 +16,10 @@ import 'red_line_sprite.dart';
 const double defaultWidth = 60;
 const double defaultHeight = 60;
 
-const boardLengthX = 9;
-const boardLengthY = 8;
+// const boardLengthX = 9;
+// const boardLengthY = 8;
+const boardLengthX = 3;
+const boardLengthY = 3;
 
 const double gameWidth = defaultWidth * (boardLengthX + 2);
 const double gameHeight = defaultHeight * (boardLengthY + 2);
