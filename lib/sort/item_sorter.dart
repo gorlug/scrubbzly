@@ -42,7 +42,6 @@ class ItemSorterImpl implements ItemSorter {
       finished = true;
     } else {
       _splitArrays = ArrayMiddleSplitter(itemsToSort).split();
-      print('bbq initial split arrays: $_splitArrays');
       _leftArray = _splitArrays.removeAt(0);
       _rightArray = _splitArrays.removeAt(0);
       _mergedArrays = [];
@@ -86,9 +85,7 @@ class ItemSorterImpl implements ItemSorter {
   }
 
   void _finishCurrentMerge() {
-    print('bbq _splitArrays before: $_splitArrays');
     _mergedArrays.add(_currentMerge);
-    print('bbq _mergedArrays: $_mergedArrays');
     _currentMerge = [];
     if (_splitArrays.length == 1) {
       _mergedArrays.add(_splitArrays.removeLast());
@@ -103,7 +100,6 @@ class ItemSorterImpl implements ItemSorter {
       _mergedArrays = [];
     }
     if (_splitArrays.isNotEmpty) {
-      print('bbq _splitArrays after: $_splitArrays');
       _leftArray = _splitArrays.removeAt(0);
       _rightArray = _splitArrays.removeAt(0);
     }

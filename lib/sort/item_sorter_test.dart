@@ -95,6 +95,30 @@ void main() {
       expect(await sorter.getSortedItems(), [itemA]);
     });
 
+    test('sort five items', () async {
+      // arrange
+      final itemA = Item('A');
+      final itemB = Item('B');
+      final itemC = Item('C');
+      final itemD = Item('D');
+      final itemE = Item('E');
+      final sorter = ItemSorterImpl([itemE, itemC, itemD, itemB, itemA]);
+
+      while (await sorter.isFinished() == false) {
+        final itemsToCompare = await sorter.nextItems();
+        if (itemsToCompare.leftItem.name.compareTo(
+            itemsToCompare.rightItem.name) < 0) {
+          await itemsToCompare.setSmallerItem(itemsToCompare.leftItem);
+        } else {
+          await itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
+        }
+      }
+
+      expect(await sorter.isFinished(), true);
+      expect(
+          await sorter.getSortedItems(), [itemA, itemB, itemC, itemD, itemE]);
+    });
+
     test('array middle splitter', () {
       // arrange
       final itemA = Item('A');
