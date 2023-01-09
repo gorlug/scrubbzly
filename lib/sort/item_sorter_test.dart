@@ -4,63 +4,63 @@ import 'item_sorter.dart';
 
 void main() {
   group('ItemSorter', () {
-    test('sort two items', () {
+    test('sort two items', () async {
       // arrange
       final itemA = Item('A');
       final itemB = Item('B');
-      final sorter = ItemSorter([itemB, itemA]);
+      final sorter = ItemSorterImpl([itemB, itemA]);
       // act
-      expect(sorter.isFinished(), false);
-      final itemsToCompare = sorter.nextItems();
-      itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
+      expect(await sorter.isFinished(), false);
+      final itemsToCompare = await sorter.nextItems();
+      await itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
       // assert
-      expect(sorter.isFinished(), true);
-      expect(sorter.getSortedItems(), [itemA, itemB]);
+      expect(await sorter.isFinished(), true);
+      expect(await sorter.getSortedItems(), [itemA, itemB]);
     });
 
-    test('sort four items', () {
+    test('sort four items', () async {
       // arrange
       final itemA = Item('A');
       final itemB = Item('B');
       final itemC = Item('C');
       final itemD = Item('D');
-      final sorter = ItemSorter([itemD, itemB, itemA, itemC]);
+      final sorter = ItemSorterImpl([itemD, itemB, itemA, itemC]);
       // itemB, itemD | itemA, itemC
       // itemA, itemB
       // itemB, itemC
       // act
-      expect(sorter.isFinished(), false);
-      var itemsToCompare = sorter.nextItems();
+      expect(await sorter.isFinished(), false);
+      var itemsToCompare = await sorter.nextItems();
       expect(itemsToCompare.leftItem, itemD);
       expect(itemsToCompare.rightItem, itemB);
-      itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
+      await itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
 
-      expect(sorter.isFinished(), false);
-      itemsToCompare = sorter.nextItems();
+      expect(await sorter.isFinished(), false);
+      itemsToCompare = await sorter.nextItems();
       expect(itemsToCompare.leftItem, itemA);
       expect(itemsToCompare.rightItem, itemC);
-      itemsToCompare.setSmallerItem(itemsToCompare.leftItem);
+      await itemsToCompare.setSmallerItem(itemsToCompare.leftItem);
 
-      expect(sorter.isFinished(), false);
-      itemsToCompare = sorter.nextItems();
+      expect(await sorter.isFinished(), false);
+      itemsToCompare = await sorter.nextItems();
       expect(itemsToCompare.leftItem, itemB);
       expect(itemsToCompare.rightItem, itemA);
-      itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
+      await itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
 
-      expect(sorter.isFinished(), false);
-      itemsToCompare = sorter.nextItems();
+      expect(await sorter.isFinished(), false);
+      itemsToCompare = await sorter.nextItems();
       expect(itemsToCompare.leftItem, itemB);
       expect(itemsToCompare.rightItem, itemC);
-      itemsToCompare.setSmallerItem(itemsToCompare.leftItem);
+      await itemsToCompare.setSmallerItem(itemsToCompare.leftItem);
 
-      expect(sorter.isFinished(), false);
-      itemsToCompare = sorter.nextItems();
+      expect(await sorter.isFinished(), false);
+      itemsToCompare = await sorter.nextItems();
       expect(itemsToCompare.leftItem, itemD);
       expect(itemsToCompare.rightItem, itemC);
-      itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
+      await itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
 
-      expect(sorter.isFinished(), true);
-      expect(sorter.getSortedItems(), [itemA, itemB, itemC, itemD]);
+      expect(await sorter.isFinished(), true);
+      expect(await sorter.getSortedItems(), [itemA, itemB, itemC, itemD]);
     });
 
     test('array middle splitter', () {
@@ -75,7 +75,12 @@ void main() {
       final splitArrays = splitter.split();
 
       // assert
-      expect(splitArrays, [[itemD], [itemB], [itemA], [itemC]]);
+      expect(splitArrays, [
+        [itemD],
+        [itemB],
+        [itemA],
+        [itemC]
+      ]);
     });
   });
 }

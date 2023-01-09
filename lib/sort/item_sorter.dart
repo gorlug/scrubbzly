@@ -9,7 +9,23 @@ class Item {
   }
 }
 
-class ItemSorter {
+abstract class ItemSorter {
+  Future<bool> isFinished();
+
+  Future<ItemsToCompare> nextItems();
+
+  Future<List<Item>> getSortedItems();
+}
+
+abstract class ItemsToCompare {
+  Future<void> setSmallerItem(Item item);
+
+  Item get leftItem;
+
+  Item get rightItem;
+}
+
+class ItemSorterImpl implements ItemSorter {
   final List<Item> itemsToSort;
   List<Item> sortedItems = [];
   bool finished = false;
@@ -20,7 +36,7 @@ class ItemSorter {
   late List<Item> _leftArray;
   late List<Item> _rightArray;
 
-  ItemSorter(this.itemsToSort) {
+  ItemSorterImpl(this.itemsToSort) {
     _splitArrays = ArrayMiddleSplitter(itemsToSort).split();
     _leftArray = _splitArrays.removeAt(0);
     _rightArray = _splitArrays.removeAt(0);
@@ -28,19 +44,22 @@ class ItemSorter {
     _currentMerge = [];
   }
 
-  bool isFinished() {
+  @override
+  Future<bool> isFinished() async {
     return finished;
   }
 
-  ItemsToCompare nextItems() {
-    return ItemsToCompare(this, _leftArray.first, _rightArray.first);
+  @override
+  Future<ItemsToCompare> nextItems() async {
+    return ItemsToCompareImpl(this, _leftArray.first, _rightArray.first);
   }
 
-  List<Item> getSortedItems() {
+  @override
+  Future<List<Item>> getSortedItems() async {
     return sortedItems;
   }
 
-  void comparisonFinished(ItemsToCompare itemsToCompare) {
+  void comparisonFinished(ItemsToCompareImpl itemsToCompare) {
     _currentMerge.add(itemsToCompare.smallerItem);
     if (itemsToCompare.leftItemIsSmaller) {
       _leftArray.removeAt(0);
@@ -82,18 +101,21 @@ class ItemSorter {
   }
 }
 
-class ItemsToCompare {
-  final ItemSorter sorter;
+class ItemsToCompareImpl extends ItemsToCompare {
+  final ItemSorterImpl sorter;
+  @override
   final Item leftItem;
+  @override
   final Item rightItem;
   late Item smallerItem;
   bool leftItemIsSmaller = false;
 
-  ItemsToCompare(this.sorter, this.leftItem, this.rightItem) {
+  ItemsToCompareImpl(this.sorter, this.leftItem, this.rightItem) {
     smallerItem = leftItem;
   }
 
-  void setSmallerItem(Item item) {
+  @override
+  Future<void> setSmallerItem(Item item) async {
     smallerItem = item;
     if (item == leftItem) {
       leftItemIsSmaller = true;
