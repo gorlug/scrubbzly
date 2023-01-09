@@ -22,4 +22,10 @@ class ItemSorterWithDelay extends ItemSorterImpl {
     await Future.delayed(delay);
     return super.getSortedItems();
   }
+
+  @override
+  Future<List<Item>> getCurrentSort() async {
+    await Future.delayed(delay);
+    return super.getCurrentSort();
+  }
 }

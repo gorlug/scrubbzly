@@ -15,6 +15,8 @@ abstract class ItemSorter {
   Future<ItemsToCompare> nextItems();
 
   Future<List<Item>> getSortedItems();
+
+  Future<List<Item>> getCurrentSort();
 }
 
 abstract class ItemsToCompare {
@@ -103,6 +105,23 @@ class ItemSorterImpl implements ItemSorter {
       _leftArray = _splitArrays.removeAt(0);
       _rightArray = _splitArrays.removeAt(0);
     }
+  }
+
+  @override
+  Future<List<Item>> getCurrentSort() async {
+    final List<Item> current = [];
+    print('mergedArrays: $_mergedArrays');
+    current.addAll(_mergedArrays.expand((element) => element).toList());
+    current.addAll(_currentMerge);
+    print('currentMerge: $_currentMerge');
+    current.addAll(_leftArray);
+    print('leftArray: $_leftArray');
+    current.addAll(_rightArray);
+    print('rightArray: $_rightArray');
+    current.addAll(_splitArrays.expand((element) => element).toList());
+    print('splitArrays: $_splitArrays');
+    print('current: $current');
+    return current;
   }
 }
 

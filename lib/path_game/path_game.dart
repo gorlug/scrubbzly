@@ -24,6 +24,11 @@ const boardLengthY = 3;
 const double gameWidth = defaultWidth * (boardLengthX + 2);
 const double gameHeight = defaultHeight * (boardLengthY + 2);
 
+enum GameEndBlock {
+  A,
+  B,
+}
+
 class PathGame extends FlameGame
     with
         HasTappableComponents,
@@ -34,8 +39,9 @@ class PathGame extends FlameGame
   List<GameBlockSprite> routeSprites = [];
   late PathGameBoard board;
   bool gameFinished = false;
+  void Function(GameEndBlock endBlock) onGameFinished;
 
-  PathGame();
+  PathGame(this.onGameFinished);
 
   @override
   Future<void>? onLoad() async {
@@ -107,9 +113,10 @@ class PathGame extends FlameGame
     return routeSprites.last == sprite;
   }
 
-  void setGameFinished() {
+  void setGameFinished(GameEndBlock endBlock) {
     gameFinished = true;
     redRawRedLineToGreen(routeSprites);
+    onGameFinished(endBlock);
   }
 }
 
@@ -514,7 +521,7 @@ mixin EndSprite on RedLineAdder {
 
   void onRouteEnd() {
     print('onRouteEnd');
-    gameRef.setGameFinished();
+    gameRef.setGameFinished(getEndBlock());
     final effect = ColorEffect(
       const Color(0xFF00FF00),
       const Offset(0.0, 0.4),
@@ -527,6 +534,8 @@ mixin EndSprite on RedLineAdder {
   GameBlockSprite createRedLineSprite() {
     throw UnimplementedError();
   }
+
+  GameEndBlock getEndBlock();
 }
 
 class ASprite extends GameBlockSprite with RedLineAdder, EndSprite {
@@ -536,6 +545,11 @@ class ASprite extends GameBlockSprite with RedLineAdder, EndSprite {
   String getSprite() {
     return 'a.png';
   }
+
+  @override
+  GameEndBlock getEndBlock() {
+    return GameEndBlock.A;
+  }
 }
 
 class BSprite extends GameBlockSprite with RedLineAdder, EndSprite {
@@ -544,5 +558,10 @@ class BSprite extends GameBlockSprite with RedLineAdder, EndSprite {
   @override
   String getSprite() {
     return 'b.png';
+  }
+
+  @override
+  GameEndBlock getEndBlock() {
+    return GameEndBlock.B;
   }
 }
