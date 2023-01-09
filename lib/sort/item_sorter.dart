@@ -37,11 +37,17 @@ class ItemSorterImpl implements ItemSorter {
   late List<Item> _rightArray;
 
   ItemSorterImpl(this.itemsToSort) {
-    _splitArrays = ArrayMiddleSplitter(itemsToSort).split();
-    _leftArray = _splitArrays.removeAt(0);
-    _rightArray = _splitArrays.removeAt(0);
-    _mergedArrays = [];
-    _currentMerge = [];
+    if (itemsToSort.length == 1) {
+      sortedItems = itemsToSort;
+      finished = true;
+    } else {
+      _splitArrays = ArrayMiddleSplitter(itemsToSort).split();
+      print('bbq initial split arrays: $_splitArrays');
+      _leftArray = _splitArrays.removeAt(0);
+      _rightArray = _splitArrays.removeAt(0);
+      _mergedArrays = [];
+      _currentMerge = [];
+    }
   }
 
   @override
@@ -84,14 +90,17 @@ class ItemSorterImpl implements ItemSorter {
     _mergedArrays.add(_currentMerge);
     print('bbq _mergedArrays: $_mergedArrays');
     _currentMerge = [];
+    if (_splitArrays.length == 1) {
+      _mergedArrays.add(_splitArrays.removeLast());
+    }
+    if (_mergedArrays.length == 1 && _splitArrays.isEmpty) {
+      sortedItems = _mergedArrays.first;
+      finished = true;
+      return;
+    }
     if (_splitArrays.isEmpty) {
       _splitArrays = _mergedArrays;
       _mergedArrays = [];
-    }
-    if (_splitArrays.length == 1) {
-      sortedItems = _splitArrays.first;
-      finished = true;
-      return;
     }
     if (_splitArrays.isNotEmpty) {
       print('bbq _splitArrays after: $_splitArrays');

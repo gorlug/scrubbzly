@@ -63,6 +63,38 @@ void main() {
       expect(await sorter.getSortedItems(), [itemA, itemB, itemC, itemD]);
     });
 
+    test('sort three items', () async {
+      // arrange
+      final itemA = Item('A');
+      final itemB = Item('B');
+      final itemC = Item('C');
+      final sorter = ItemSorterImpl([itemC, itemB, itemA]);
+      // act
+      // itemC, itemB
+      expect(await sorter.isFinished(), false);
+      var itemsToCompare = await sorter.nextItems();
+      await itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
+
+      // itemB, itemC | itemA
+      expect(await sorter.isFinished(), false);
+      itemsToCompare = await sorter.nextItems();
+      await itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
+
+      // assert
+      expect(await sorter.isFinished(), true);
+      expect(await sorter.getSortedItems(), [itemA, itemB, itemC]);
+    });
+
+    test('sort one item', () async {
+      // arrange
+      final itemA = Item('A');
+      final sorter = ItemSorterImpl([itemA]);
+      // act
+      expect(await sorter.isFinished(), true);
+      // assert
+      expect(await sorter.getSortedItems(), [itemA]);
+    });
+
     test('array middle splitter', () {
       // arrange
       final itemA = Item('A');
