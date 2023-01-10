@@ -15,4 +15,6 @@ void main() {
 Future<void> _loadItems() async {
   final itemBoard = ForgeItemBoard();
   final items = await itemBoard.getItems();
+  final array = items.map((e) => '${e.name}');
+  print(array);
 }

@@ -46,9 +46,11 @@
     </script>
     <!-- This script adds the flutter initialization JS code -->
     <script src="flutter.js" defer></script>
+    <script src="main.js" defer></script>
 </head>
 <body>
 <script>
+    console.log('window', window);
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
@@ -61,6 +63,13 @@
           });
         }
       });
+
+      async function test() {
+          const response = await forge.getActiveSprintIssues();
+          console.log('response', typeof response, response);
+      }
+
+      test();
     });
 
 

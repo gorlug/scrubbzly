@@ -14,6 +14,9 @@ resources:
 app:
   id: ari:cloud:ecosystem::app/38d21d14-319d-4388-ba1f-0827967618bb
 permissions:
+  scopes:
+      - 'write:jira-work'
+      - 'read:jira-work'
   content:
     scripts:
       - 'unsafe-eval'

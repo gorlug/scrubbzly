@@ -38,8 +38,39 @@
       // return ['JS B', 'JS A', 'JS C'];
     }
 
+    // await forge.getActiveSprintIssues();
+    window.forge = {
+        getActiveSprintIssues: function() {
+            return Promise.resolve('{"expand":"schema,names","startAt":0,"maxResults":50,"total":3,"issues":[{"expand":"operations,versionedRepresentations,editmeta,changelog,renderedFields","id":"10004","self":"https://api.atlassian.com/ex/jira/71000936-9702-4ae5-8892-d5eb8cd631d6/rest/api/3/issue/10004","key":"RS-4","fields":{"summary":"Some new issue"}},{"expand":"operations,versionedRepresentations,editmeta,changelog,renderedFields","id":"10003","self":"https://api.atlassian.com/ex/jira/71000936-9702-4ae5-8892-d5eb8cd631d6/rest/api/3/issue/10003","key":"RS-3","fields":{"summary":"Jira B"}},{"expand":"operations,versionedRepresentations,editmeta,changelog,renderedFields","id":"10002","self":"https://api.atlassian.com/ex/jira/71000936-9702-4ae5-8892-d5eb8cd631d6/rest/api/3/issue/10002","key":"RS-2","fields":{"summary":"Jira A"}}]}');
+        }
+    };
+
     // The value below is injected by flutter build, do not touch.
     var serviceWorkerVersion = null;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -50,6 +81,7 @@
 </head>
 <body>
 <script>
+      console.log('window', window);
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
@@ -62,7 +94,31 @@
           });
         }
       });
+
     });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

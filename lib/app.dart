@@ -2,6 +2,7 @@
 
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:jira_game/items/forge_item_board.dart';
 import 'package:jira_game/items/item_sorter.dart';
 import 'package:jira_game/items/item_sorter_with_delay.dart';
 import 'package:jira_game/items/items_widget.dart';
@@ -21,9 +22,7 @@ final List<Item> initialItems = [];
 class _AppState extends State<App> {
   @override
   void initState() {
-    _fillItems();
     super.initState();
-    // document.onContextMenu.listen((event) => event.preventDefault());
   }
 
   @override
@@ -33,17 +32,13 @@ class _AppState extends State<App> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(
-        items: initialItems,
-      ),
+      home: HomePage(),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  final List<Item> items;
-
-  const HomePage({Key? key, required this.items}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -70,9 +65,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    items = widget.items;
-    sorter =
-        ItemSorterWithDelay(widget.items, const Duration(milliseconds: 500));
+    _loadItems();
   }
 
   @override
@@ -86,6 +79,18 @@ class _HomePageState extends State<HomePage> {
         child: loading ? _getLoading() : _getWidgetToShow(),
       ),
     );
+  }
+
+  void _loadItems() async {
+    final itemBoard = ForgeItemBoard();
+    final items = await itemBoard.getItems();
+    final sorter =
+        ItemSorterWithDelay(items, const Duration(milliseconds: 500));
+    setState(() {
+      this.items = items;
+      this.sorter = sorter;
+      loading = false;
+    });
   }
 
   Widget _getWidgetToShow() {
