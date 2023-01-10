@@ -1,0 +1,27 @@
+modules:
+  jira:globalPage:
+    - key: sprint-board-sorter-game-hello-world-page
+      resource: main
+      resolver:
+        function: resolver
+      title: Sprint Board Sorter Game
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main
+    path: static/flutter-game/build
+app:
+  id: ari:cloud:ecosystem::app/38d21d14-319d-4388-ba1f-0827967618bb
+permissions:
+  content:
+    scripts:
+      - 'unsafe-eval'
+    styles:
+       - 'unsafe-inline'
+  external:
+   fetch:
+     client:
+       - 'https://fonts.gstatic.com'
+   styles:
+     - 'https://unpkg.com/@atlaskit/*'
