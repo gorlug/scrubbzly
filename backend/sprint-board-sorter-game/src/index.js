@@ -4,11 +4,12 @@ import api, {route} from '@forge/api';
 const resolver = new Resolver();
 
 resolver.define('getIssue', async (req) => {
+    const { issueId } = req.payload;
     try {
         const response = await api
             .asApp()
             .requestJira(
-                route`/rest/api/3/issue/RS-1?fields=summary,description`,
+                route`/rest/api/3/issue/${issueId}?fields=summary,description`,
                 {
                     headers: {
                         Accept: 'application/json',
@@ -23,7 +24,6 @@ resolver.define('getIssue', async (req) => {
 });
 
 resolver.define('getActiveSprintIssues', async (req) => {
-    console.log('abc bbq', `/rest/api/3/search?jql=${('Sprint in openSprints() AND Sprint not in futureSprints()')}`)
     const response = await api
         .asApp()
         .requestJira(
@@ -37,6 +37,26 @@ resolver.define('getActiveSprintIssues', async (req) => {
 
     return await response.text();
 });
+
+resolver.define('orderIssueBeforeOther', async (req) => {
+    const { issue, rankBeforeIssue } = req.payload;
+    console.log('order issue', issue, rankBeforeIssue);
+    const body = {
+        rankBeforeIssue,
+        issues: [issue]
+    }
+    const url = route`/rest/agile/1.0/issue/rank`;
+    console.log('url', url);
+    const response = await api.asApp().requestJira(url, {
+        method: 'PUT',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    })
+    console.log('response', response.status);
+})
 
 export const handler = resolver.getDefinitions();
 

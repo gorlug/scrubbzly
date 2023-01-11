@@ -810,8 +810,8 @@ var __webpack_exports__ = {};
 /* harmony import */ var _forge_bridge__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_forge_bridge__WEBPACK_IMPORTED_MODULE_0__);
 
 
-async function getIssue() {
-    const response = await (0,_forge_bridge__WEBPACK_IMPORTED_MODULE_0__.invoke)('getIssue');
+async function getIssue(issueId) {
+    const response = await (0,_forge_bridge__WEBPACK_IMPORTED_MODULE_0__.invoke)('getIssue', { issueId });
     console.log(response);
 }
 
@@ -819,39 +819,14 @@ async function getActiveSprintIssues() {
     return await (0,_forge_bridge__WEBPACK_IMPORTED_MODULE_0__.invoke)('getActiveSprintIssues');
 }
 
-async function getActiveSprintIssuesMocked() {
-    return Promise.resolve({
-        "expand": "schema,names",
-        "startAt": 0,
-        "maxResults": 50,
-        "total": 2,
-        "issues": [
-            {
-                "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
-                "id": "10003",
-                "self": "https://api.atlassian.com/ex/jira/71000936-9702-4ae5-8892-d5eb8cd631d6/rest/api/3/issue/10003",
-                "key": "RS-3",
-                "fields": {
-                    "summary": "Jira B"
-                }
-            },
-            {
-                "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
-                "id": "10002",
-                "self": "https://api.atlassian.com/ex/jira/71000936-9702-4ae5-8892-d5eb8cd631d6/rest/api/3/issue/10002",
-                "key": "RS-2",
-                "fields": {
-                    "summary": "Jira A"
-                }
-            }
-        ]
-    })
+async function orderIssueBeforeOther(issue, rankBeforeIssue) {
+    return await (0,_forge_bridge__WEBPACK_IMPORTED_MODULE_0__.invoke)('orderIssueBeforeOther', { issue, rankBeforeIssue });
 }
 
 const forge = {
     getIssue,
     getActiveSprintIssues,
-    getActiveSprintIssuesMocked
+    orderIssueBeforeOther
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (forge);

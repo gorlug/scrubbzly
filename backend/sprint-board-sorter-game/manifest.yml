@@ -17,6 +17,7 @@ permissions:
   scopes:
       - 'write:jira-work'
       - 'read:jira-work'
+      - 'write:issue:jira-software'
   content:
     scripts:
       - 'unsafe-eval'
