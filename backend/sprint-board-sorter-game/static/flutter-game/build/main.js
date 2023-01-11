@@ -823,10 +823,20 @@ async function orderIssueBeforeOther(issue, rankBeforeIssue) {
     return await (0,_forge_bridge__WEBPACK_IMPORTED_MODULE_0__.invoke)('orderIssueBeforeOther', { issue, rankBeforeIssue });
 }
 
+async function setStorage(key, value) {
+    await (0,_forge_bridge__WEBPACK_IMPORTED_MODULE_0__.invoke)('setStorage', { key, value });
+}
+
+async function getStorage(key) {
+    return await (0,_forge_bridge__WEBPACK_IMPORTED_MODULE_0__.invoke)('getStorage', {key});
+}
+
 const forge = {
     getIssue,
     getActiveSprintIssues,
-    orderIssueBeforeOther
+    orderIssueBeforeOther,
+    setStorage,
+    getStorage,
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (forge);

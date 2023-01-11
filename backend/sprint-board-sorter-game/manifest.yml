@@ -18,6 +18,7 @@ permissions:
       - 'write:jira-work'
       - 'read:jira-work'
       - 'write:issue:jira-software'
+      - 'storage:app'
   content:
     scripts:
       - 'unsafe-eval'

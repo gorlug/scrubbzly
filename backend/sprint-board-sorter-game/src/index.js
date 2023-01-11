@@ -1,10 +1,10 @@
 import Resolver from '@forge/resolver';
-import api, {route} from '@forge/api';
+import api, {route, storage} from '@forge/api';
 
 const resolver = new Resolver();
 
 resolver.define('getIssue', async (req) => {
-    const { issueId } = req.payload;
+    const {issueId} = req.payload;
     try {
         const response = await api
             .asApp()
@@ -39,7 +39,7 @@ resolver.define('getActiveSprintIssues', async (req) => {
 });
 
 resolver.define('orderIssueBeforeOther', async (req) => {
-    const { issue, rankBeforeIssue } = req.payload;
+    const {issue, rankBeforeIssue} = req.payload;
     console.log('order issue', issue, rankBeforeIssue);
     const body = {
         rankBeforeIssue,
@@ -57,6 +57,16 @@ resolver.define('orderIssueBeforeOther', async (req) => {
     })
     console.log('response', response.status);
 })
+
+resolver.define('setStorage', async (req) => {
+    const {key, value} = req.payload;
+    await storage.set(key, value);
+});
+
+resolver.define('getStorage', async (req) => {
+    const {key} = req.payload;
+    return await storage.get(key);
+});
 
 export const handler = resolver.getDefinitions();
 
