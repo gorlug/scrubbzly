@@ -29,3 +29,10 @@ class ItemSorterWithDelay extends ItemSorterImpl {
     return super.getCurrentSort();
   }
 }
+
+class DelayItemSorterFactory implements ItemSorterFactory {
+  @override
+  ItemSorter create(List<Item> items) {
+    return ItemSorterWithDelay(items, const Duration(milliseconds: 500));
+  }
+}

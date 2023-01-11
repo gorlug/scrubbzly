@@ -1,5 +1,7 @@
 import 'package:jira_game/items/item_sorter.dart';
 
-abstract class ItemBoard {
-  Future<List<Item>> getItems();
+abstract class ItemBoard<ItemType extends Item> {
+  Future<List<ItemType>> getItems();
+
+  Future<ItemSorter> createSorter();
 }

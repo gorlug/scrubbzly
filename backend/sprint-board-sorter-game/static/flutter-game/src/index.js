@@ -21,12 +21,17 @@ async function getStorage(key) {
     return await invoke('getStorage', {key});
 }
 
+async function deleteStorage(key) {
+    return await invoke('deleteStorage', {key});
+}
+
 const forge = {
     getIssue,
     getActiveSprintIssues,
     orderIssueBeforeOther,
     setStorage,
     getStorage,
+    deleteStorage
 }
 
 export default forge;

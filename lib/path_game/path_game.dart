@@ -163,7 +163,6 @@ mixin RedLineAdder on GameBlockSprite {
   GameBlockSprite createRedLineSprite();
 
   bool _isValidRouteAndSetRouteStartAndEnd(GameBlockSprite lastRouteSprite) {
-    print('lastRouteSprite $lastRouteSprite');
     final isNeighbor = _spriteIsNeighbor(lastRouteSprite);
     if (isNeighbor.sprite == null) {
       return false;
@@ -279,7 +278,6 @@ abstract class GameBlockSprite extends SpriteComponent
   }
 
   bool isBlockSideOpen(BlockSide blockSide) {
-    print('blockSide $blockSide, ${getOpenBlockSides()}');
     return getOpenBlockSides().contains(blockSide);
   }
 }
@@ -520,7 +518,6 @@ mixin EndSprite on RedLineAdder {
   }
 
   void onRouteEnd() {
-    print('onRouteEnd');
     gameRef.setGameFinished(getEndBlock());
     final effect = ColorEffect(
       const Color(0xFF00FF00),

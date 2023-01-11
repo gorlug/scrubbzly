@@ -12,6 +12,8 @@ class Item {
 abstract class ItemSorter {
   Future<bool> isFinished();
 
+  Future<void> start();
+
   Future<ItemsToCompare> nextItems();
 
   Future<List<Item>> getSortedItems();
@@ -19,37 +21,37 @@ abstract class ItemSorter {
   Future<List<Item>> getCurrentSort();
 }
 
-abstract class ItemsToCompare {
-  Future<void> setSmallerItem(Item item);
+abstract class ItemsToCompare<ItemType extends Item> {
+  Future<void> setSmallerItem(ItemType item);
 
-  Item get leftItem;
+  ItemType get leftItem;
 
-  Item get rightItem;
+  ItemType get rightItem;
 }
 
-class ItemSorterImpl implements ItemSorter {
-  final List<Item> itemsToSort;
-  List<Item> sortedItems = [];
-  bool finished = false;
-  late List<List<Item>> _splitArrays;
-  late List<List<Item>> _mergedArrays;
+abstract class ItemSorterFactory {
+  ItemSorter create(List<Item> items);
+}
 
-  late List<Item> _currentMerge;
-  late List<Item> _leftArray;
-  late List<Item> _rightArray;
-
-  ItemSorterImpl(this.itemsToSort) {
-    if (itemsToSort.length == 1) {
-      sortedItems = itemsToSort;
-      finished = true;
-    } else {
-      _splitArrays = ArrayMiddleSplitter(itemsToSort).split();
-      _leftArray = _splitArrays.removeAt(0);
-      _rightArray = _splitArrays.removeAt(0);
-      _mergedArrays = [];
-      _currentMerge = [];
-    }
+class LocalItemSorterFactory implements ItemSorterFactory {
+  @override
+  ItemSorter create(List<Item> items) {
+    return ItemSorterImpl(items);
   }
+}
+
+class ItemSorterImpl<ItemType extends Item> implements ItemSorter {
+  final List<ItemType> itemsToSort;
+  List<ItemType> sortedItems = [];
+  bool finished = false;
+  late List<List<ItemType>> splitArrays;
+  late List<List<ItemType>> mergedArrays;
+
+  late List<ItemType> currentMerge;
+  late List<ItemType> leftArray;
+  late List<ItemType> rightArray;
+
+  ItemSorterImpl(this.itemsToSort);
 
   @override
   Future<bool> isFinished() async {
@@ -58,7 +60,8 @@ class ItemSorterImpl implements ItemSorter {
 
   @override
   Future<ItemsToCompare> nextItems() async {
-    return ItemsToCompareImpl(this, _leftArray.first, _rightArray.first);
+    return ItemsToCompareImpl<ItemType>(
+        this, leftArray.first, rightArray.first);
   }
 
   @override
@@ -66,66 +69,86 @@ class ItemSorterImpl implements ItemSorter {
     return sortedItems;
   }
 
-  void comparisonFinished(ItemsToCompareImpl itemsToCompare) {
-    _currentMerge.add(itemsToCompare.smallerItem);
+  Future<void> comparisonFinished(
+      ItemsToCompareImpl<ItemType> itemsToCompare) async {
+    currentMerge.add(itemsToCompare.smallerItem);
     if (itemsToCompare.leftItemIsSmaller) {
-      _leftArray.removeAt(0);
+      leftArray.removeAt(0);
     } else {
-      _rightArray.removeAt(0);
+      rightArray.removeAt(0);
     }
-    _checkForMergeFinished();
+    await _checkForMergeFinished();
   }
 
-  void _checkForMergeFinished() {
-    if (_leftArray.isEmpty) {
-      _currentMerge.addAll(_rightArray);
-      _finishCurrentMerge();
-    } else if (_rightArray.isEmpty) {
-      _currentMerge.addAll(_leftArray);
-      _finishCurrentMerge();
+  Future<void> _checkForMergeFinished() async {
+    if (leftArray.isEmpty) {
+      currentMerge.addAll(rightArray);
+      await _finishCurrentMerge();
+    } else if (rightArray.isEmpty) {
+      currentMerge.addAll(leftArray);
+      await _finishCurrentMerge();
     }
   }
 
-  void _finishCurrentMerge() {
-    _mergedArrays.add(_currentMerge);
-    _currentMerge = [];
-    if (_splitArrays.length == 1) {
-      _mergedArrays.add(_splitArrays.removeLast());
+  Future<void> _finishCurrentMerge() async {
+    mergedArrays.add(currentMerge);
+    currentMerge = [];
+    if (splitArrays.length == 1) {
+      mergedArrays.add(splitArrays.removeLast());
     }
-    if (_mergedArrays.length == 1 && _splitArrays.isEmpty) {
-      sortedItems = _mergedArrays.first;
-      finished = true;
+    if (mergedArrays.length == 1 && splitArrays.isEmpty) {
+      sortedItems = mergedArrays.first;
+      await setFinished();
       return;
     }
-    if (_splitArrays.isEmpty) {
-      _splitArrays = _mergedArrays;
-      _mergedArrays = [];
+    if (splitArrays.isEmpty) {
+      splitArrays = mergedArrays;
+      mergedArrays = [];
     }
-    if (_splitArrays.isNotEmpty) {
-      _leftArray = _splitArrays.removeAt(0);
-      _rightArray = _splitArrays.removeAt(0);
+    if (splitArrays.isNotEmpty) {
+      leftArray = splitArrays.removeAt(0);
+      rightArray = splitArrays.removeAt(0);
     }
+  }
+
+  Future<void> setFinished() async {
+    finished = true;
   }
 
   @override
   Future<List<Item>> getCurrentSort() async {
     final List<Item> current = [];
-    current.addAll(_mergedArrays.expand((element) => element).toList());
-    current.addAll(_currentMerge);
-    current.addAll(_leftArray);
-    current.addAll(_rightArray);
-    current.addAll(_splitArrays.expand((element) => element).toList());
+    current.addAll(mergedArrays.expand((element) => element).toList());
+    current.addAll(currentMerge);
+    current.addAll(leftArray);
+    current.addAll(rightArray);
+    current.addAll(splitArrays.expand((element) => element).toList());
     return current;
+  }
+
+  @override
+  Future<void> start() async {
+    if (itemsToSort.length == 1) {
+      sortedItems = itemsToSort;
+      setFinished();
+    } else {
+      splitArrays = ArrayMiddleSplitter<ItemType>(itemsToSort).split();
+      leftArray = splitArrays.removeAt(0);
+      rightArray = splitArrays.removeAt(0);
+      mergedArrays = [];
+      currentMerge = [];
+    }
   }
 }
 
-class ItemsToCompareImpl extends ItemsToCompare {
+class ItemsToCompareImpl<ItemType extends Item>
+    implements ItemsToCompare<ItemType> {
   final ItemSorterImpl sorter;
   @override
-  final Item leftItem;
+  final ItemType leftItem;
   @override
-  final Item rightItem;
-  late Item smallerItem;
+  final ItemType rightItem;
+  late ItemType smallerItem;
   bool leftItemIsSmaller = false;
 
   ItemsToCompareImpl(this.sorter, this.leftItem, this.rightItem) {
@@ -133,29 +156,29 @@ class ItemsToCompareImpl extends ItemsToCompare {
   }
 
   @override
-  Future<void> setSmallerItem(Item item) async {
+  Future<void> setSmallerItem(ItemType item) async {
     smallerItem = item;
     if (item == leftItem) {
       leftItemIsSmaller = true;
     } else {
       leftItemIsSmaller = false;
     }
-    sorter.comparisonFinished(this);
+    await sorter.comparisonFinished(this);
   }
 }
 
-class ArrayMiddleSplitter {
-  final List<Item> initialArray;
-  final List<List<Item>> splitArrays = [];
+class ArrayMiddleSplitter<ItemType extends Item> {
+  final List<ItemType> initialArray;
+  final List<List<ItemType>> splitArrays = [];
 
   ArrayMiddleSplitter(this.initialArray);
 
-  List<List<Item>> split() {
+  List<List<ItemType>> split() {
     _splitArray(initialArray);
     return splitArrays;
   }
 
-  void _splitArray(List<Item> array) {
+  void _splitArray(List<ItemType> array) {
     if (array.length == 1) {
       splitArrays.add(array);
       return;

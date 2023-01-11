@@ -2,6 +2,7 @@
 
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:jira_game/items/forge_item_board.dart';
 import 'package:jira_game/items/item_sorter.dart';
 import 'package:jira_game/items/item_sorter_with_delay.dart';
@@ -9,6 +10,10 @@ import 'package:jira_game/items/items_widget.dart';
 import 'package:jira_game/items/sort_finished_widget.dart';
 import 'package:jira_game/path_game/block.dart';
 import 'package:jira_game/path_game/path_game.dart';
+
+import 'items/item_board.dart';
+
+final getIt = GetIt.instance;
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -58,7 +63,7 @@ class _HomePageState extends State<HomePage> {
   bool sortingStarted = false;
   bool showList = true;
   late ItemsToCompare itemsToCompare;
-  bool loading = false;
+  bool loading = true;
   List<Item> items = [];
   bool sortFinished = false;
 
@@ -82,12 +87,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _loadItems() async {
-    final itemBoard = ForgeItemBoard();
-    final items = await itemBoard.getItems();
-    final sorter =
-        ItemSorterWithDelay(items, const Duration(milliseconds: 500));
+    final itemBoard = getIt.get<ItemBoard>();
+    final sorter = await itemBoard.createSorter();
+    await sorter.start();
+    final sortedItems = await sorter.getCurrentSort();
     setState(() {
-      this.items = items;
+      items = sortedItems;
       this.sorter = sorter;
       loading = false;
     });

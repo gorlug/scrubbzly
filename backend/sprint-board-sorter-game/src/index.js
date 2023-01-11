@@ -68,5 +68,10 @@ resolver.define('getStorage', async (req) => {
     return await storage.get(key);
 });
 
+resolver.define('deleteStorage', async (req) => {
+    const {key} = req.payload;
+    return await storage.delete(key);
+});
+
 export const handler = resolver.getDefinitions();
 

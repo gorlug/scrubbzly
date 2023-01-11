@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:js' as js;
 import 'dart:js_util';
+import 'package:jira_game/items/forge_item_sorter.dart';
 import 'package:js/js.dart';
 import 'dart:html';
 
@@ -10,14 +11,13 @@ import 'package:jira_game/items/item_sorter.dart';
 @JS('window.forge.getActiveSprintIssues')
 external dynamic Function() getActiveSprintIssues;
 
-class ForgeItemBoard implements ItemBoard {
+class ForgeItemBoard implements ItemBoard<JiraIssue> {
   ForgeItemBoard() {
     window.document.onContextMenu.listen((evt) => evt.preventDefault());
   }
 
   @override
-  Future<List<Item>> getItems() async {
-    print('get active sprint issues $getActiveSprintIssues');
+  Future<List<JiraIssue>> getItems() async {
     final response = await promiseToFuture(getActiveSprintIssues());
     print('response $response');
     final json = jsonDecode(response);
@@ -25,7 +25,12 @@ class ForgeItemBoard implements ItemBoard {
     return issues
         .map((e) => JiraIssue(e['id'], e['fields']['summary']))
         .toList();
-    // return [JiraIssue('id', 'a'), JiraIssue('id2', 'b')];
+  }
+
+  @override
+  Future<ItemSorter> createSorter() async {
+    final items = await getItems();
+    return ForgeItemSorter(items);
   }
 }
 
@@ -33,4 +38,11 @@ class JiraIssue extends Item {
   final String id;
 
   JiraIssue(this.id, String name) : super(name);
+
+  dynamic toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
+  }
 }
