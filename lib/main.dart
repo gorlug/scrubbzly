@@ -11,6 +11,7 @@ import 'path_game/path_game.dart';
 
 void main() {
   // _loadItems();
+  print('wat ${20 % 10}');
   registerServices();
   runApp(const App());
   // runApp(GameWidget(

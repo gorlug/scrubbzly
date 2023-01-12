@@ -1,10 +1,12 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:jira_game/path_game/score/extra_score.dart';
+import 'package:jira_game/path_game/score/flutter/extra_score_widget.dart';
 
 import '../../items/item_sorter.dart';
 import '../path_game.dart';
 
-class GameWrapper extends StatelessWidget {
+class GameWrapper extends StatefulWidget {
   final void Function(GameEndBlock endBlock) onGameFinished;
   final ItemsToCompare compareItems;
 
@@ -13,23 +15,83 @@ class GameWrapper extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<GameWrapper> createState() => _GameWrapperState();
+}
+
+class _GameWrapperState extends State<GameWrapper> {
+  int totalScore = 0;
+  final ExtraScore extraScore = ExtraScore();
+  bool gameFinished = false;
+  late Widget gameWidget;
+
+  @override
+  void initState() {
+    super.initState();
+    gameWidget = SizedBox(
+        width: gameWidth,
+        height: gameHeight,
+        child: GameWidget(game: PathGame(_onGameFinished)));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('A: ${compareItems.leftItem.name}'),
+          Row(
+            children: [
+              const Text(
+                'A: ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(widget.compareItems.leftItem.name),
+            ],
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-            child: Text('B: ${compareItems.rightItem.name}'),
+            child: Row(
+              children: [
+                const Text(
+                  'B: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(widget.compareItems.rightItem.name),
+              ],
+            ),
           ),
-          SizedBox(
-              width: gameWidth,
-              height: gameHeight,
-              child: GameWidget(game: PathGame(onGameFinished))),
+          _showScore(),
+          gameWidget,
         ],
       ),
     );
+  }
+
+  Widget _showScore() {
+    if (gameFinished) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Row(
+          children: [
+            const Text(
+              'Total Score: ',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text('$totalScore'),
+          ],
+        ),
+      );
+    }
+    return ExtraScoreWidget(extraScore: extraScore);
+  }
+
+  _onGameFinished(GameEndBlock endBlock) {
+    extraScore.stop();
+    setState(() {
+      gameFinished = true;
+      totalScore = 10 + extraScore.extraScore;
+    });
+    widget.onGameFinished(endBlock);
   }
 }
