@@ -10,6 +10,8 @@ class Item {
 }
 
 abstract class ItemSorter {
+  Future<bool> hasStarted();
+
   Future<bool> isFinished();
 
   Future<void> start();
@@ -43,6 +45,7 @@ class LocalItemSorterFactory implements ItemSorterFactory {
 class ItemSorterImpl<ItemType extends Item> implements ItemSorter {
   final List<ItemType> itemsToSort;
   List<ItemType> sortedItems = [];
+  bool started = false;
   bool finished = false;
   late List<List<ItemType>> splitArrays;
   late List<List<ItemType>> mergedArrays;
@@ -129,6 +132,7 @@ class ItemSorterImpl<ItemType extends Item> implements ItemSorter {
   @override
   Future<void> start() async {
     if (itemsToSort.length == 1) {
+      started = true;
       sortedItems = itemsToSort;
       setFinished();
     } else {
@@ -137,7 +141,13 @@ class ItemSorterImpl<ItemType extends Item> implements ItemSorter {
       rightArray = splitArrays.removeAt(0);
       mergedArrays = [];
       currentMerge = [];
+      started = true;
     }
+  }
+
+  @override
+  Future<bool> hasStarted() async {
+    return started;
   }
 }
 

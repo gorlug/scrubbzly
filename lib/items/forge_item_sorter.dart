@@ -25,6 +25,7 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
   Future<void> saveVariables() async {
     final dynamic variables = {
       'sortedItems': sortedItems.map((e) => e.toJson()).toList(),
+      'started': started,
       'finished': finished,
       'splitArrays':
           splitArrays.map((e) => e.map((e) => e.toJson()).toList()).toList(),
@@ -48,6 +49,7 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
     sortedItems = (json['sortedItems'] as List<dynamic>)
         .map((e) => JiraIssue(e['id'], e['name']))
         .toList();
+    started = json['started'];
     finished = json['finished'];
     splitArrays = (json['splitArrays'] as List<dynamic>)
         .map((e) => (e as List<dynamic>)
@@ -78,20 +80,14 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
 
   @override
   Future<void> start() async {
-    final loaded = await loadVariables();
-    print('start loaded $loaded');
-    if (loaded) {
-      return;
-    }
-    print('leftArray $leftArray');
+    // final loaded = await loadVariables();
+    // print('start loaded $loaded');
+    // if (loaded) {
+    //   return;
+    // }
     await super.start();
     await saveVariables();
-  }
-
-  @override
-  Future<List<Item>> getCurrentSort() async {
-    await saveVariables();
-    return super.getCurrentSort();
+    print('leftArray $leftArray');
   }
 
   @override
@@ -104,7 +100,11 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
   @override
   Future<bool> isFinished() async {
     // await loadVariables();
-    return super.isFinished();
+    final finished = await super.isFinished();
+    if (finished) {
+      await deleteVariables();
+    }
+    return finished;
   }
 
   @override
@@ -121,8 +121,9 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
   }
 
   @override
-  Future<void> setFinished() async {
-    await super.setFinished();
-    await deleteVariables();
+  Future<bool> hasStarted() async {
+    await loadVariables();
+    print('has started $started');
+    return super.hasStarted();
   }
 }

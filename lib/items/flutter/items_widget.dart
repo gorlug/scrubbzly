@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'item_sorter.dart';
+import '../item_sorter.dart';
 
 class ItemsWidget extends StatelessWidget {
   final List<Item> items;
