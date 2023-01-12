@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
-class TotalScoreWidget extends StatelessWidget {
+class ShowScoreWidget extends StatelessWidget {
   final int totalScore;
+  final String label;
 
-  const TotalScoreWidget({Key? key, required this.totalScore})
+  const ShowScoreWidget(
+      {Key? key, required this.totalScore, this.label = 'Total Score'})
       : super(key: key);
 
   @override
@@ -12,9 +14,9 @@ class TotalScoreWidget extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
       child: Row(
         children: [
-          const Text(
-            'Total Score: ',
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Text(
+            '$label: ',
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           Text('$totalScore'),
         ],

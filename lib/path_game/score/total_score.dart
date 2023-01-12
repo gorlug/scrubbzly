@@ -18,10 +18,8 @@ class TotalScore {
   Future<void> loadVariables() async {
     final response = await promiseToFuture(getStorage(totalScoreKey));
     if (response == null) {
-      print('score load variables is null');
       return;
     }
-    print('score load response $response');
     final json = jsonDecode(response);
     _totalScore = json['totalScore'] ?? 0;
   }

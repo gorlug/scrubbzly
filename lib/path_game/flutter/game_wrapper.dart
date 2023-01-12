@@ -71,7 +71,7 @@ class _GameWrapperState extends State<GameWrapper> {
 
   Widget _showScore() {
     if (gameFinished) {
-      return TotalScoreWidget(totalScore: totalScore);
+      return ShowScoreWidget(totalScore: totalScore);
     }
     return ExtraScoreWidget(extraScore: extraScore);
   }
