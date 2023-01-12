@@ -32,10 +32,6 @@
     <link rel="manifest" href="manifest.json">
 
     <script>
-    function getBoardItems() {
-      return Promise.resolve(['JS B', 'JS A', 'JS C']);
-      // return ['JS B', 'JS A', 'JS C'];
-    }
 
     // The value below is injected by flutter build, do not touch.
     var serviceWorkerVersion = '2139934503';
@@ -68,8 +64,12 @@
           // const issue = await forge.getIssue('RS-4');
           // await forge.orderIssueBeforeOther('RS-2', 'RS-4');
           // await forge.setStorage('bbq', {nom: 'omnom'});
-          const value = await forge.getStorage('bbq');
-          console.log('value', value);
+          // const value = await forge.getStorage('bbq');
+          // console.log('value', value);
+          // console.log('delete itemSorterVariables');
+          // await forge.deleteStorage('itemSorterVariables');
+          // const value = await forge.getStorage('itemSorterVariables');
+          // console.log('bbq item sorter values', value);
       }
 
       test();

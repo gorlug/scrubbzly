@@ -18,7 +18,11 @@ async function setStorage(key, value) {
 }
 
 async function getStorage(key) {
-    return await invoke('getStorage', {key});
+    const storageResult = await invoke('getStorage', {key});
+    if (typeof storageResult === 'object' && Object.keys(storageResult).length === 0) {
+        return null;
+    }
+    return storageResult;
 }
 
 async function deleteStorage(key) {

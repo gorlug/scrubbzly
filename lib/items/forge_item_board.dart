@@ -24,6 +24,8 @@ class ForgeItemBoard implements ItemBoard<JiraIssue> {
     final issues = json['issues'] as List<dynamic>;
     return issues
         .map((e) => JiraIssue(e['id'], e['fields']['summary']))
+        .toList()
+        .reversed
         .toList();
     // return [JiraIssue('1', 'Issue A'), JiraIssue('2', 'Issue B')];
   }

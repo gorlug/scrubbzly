@@ -828,7 +828,11 @@ async function setStorage(key, value) {
 }
 
 async function getStorage(key) {
-    return await (0,_forge_bridge__WEBPACK_IMPORTED_MODULE_0__.invoke)('getStorage', {key});
+    const storageResult = await (0,_forge_bridge__WEBPACK_IMPORTED_MODULE_0__.invoke)('getStorage', {key});
+    if (typeof storageResult === 'object' && Object.keys(storageResult).length === 0) {
+        return null;
+    }
+    return storageResult;
 }
 
 async function deleteStorage(key) {

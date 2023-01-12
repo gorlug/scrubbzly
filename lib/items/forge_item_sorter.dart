@@ -17,6 +17,10 @@ external dynamic Function(String key) getStorage;
 @JS('window.forge.deleteStorage')
 external dynamic Function(String key) deleteStorage;
 
+@JS('window.forge.orderIssueBeforeOther')
+external dynamic Function(String issue, String rankBeforeIssue)
+    orderIssueBeforeOther;
+
 const itemSorterKey = 'itemSorterVariables';
 
 class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
@@ -117,6 +121,7 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
   Future<void> comparisonFinished(
       ItemsToCompareImpl<JiraIssue> itemsToCompare) async {
     await super.comparisonFinished(itemsToCompare);
+    await _updateIssueOrder(itemsToCompare);
     await saveVariables();
   }
 
@@ -125,5 +130,15 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
     await loadVariables();
     print('has started $started');
     return super.hasStarted();
+  }
+
+  Future<void> _updateIssueOrder(ItemsToCompareImpl<JiraIssue> itemsToCompare) {
+    if (itemsToCompare.leftItemIsSmaller) {
+      return promiseToFuture(orderIssueBeforeOther(
+          itemsToCompare.leftItem.id, itemsToCompare.rightItem.id));
+    } else {
+      return promiseToFuture(orderIssueBeforeOther(
+          itemsToCompare.rightItem.id, itemsToCompare.leftItem.id));
+    }
   }
 }
