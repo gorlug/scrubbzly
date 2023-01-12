@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:jira_game/path_game/flutter/continue_game.dart';
 import 'package:jira_game/path_game/flutter/finished_game.dart';
 import 'package:jira_game/path_game/flutter/fresh_game.dart';
+import 'package:jira_game/path_game/score/total_score.dart';
 
 import '../../app.dart';
-import '../../items/flutter/sort_finished_widget.dart';
 import '../../items/item_board.dart';
 import '../../items/item_sorter.dart';
 import '../path_game.dart';
@@ -28,6 +28,8 @@ class _GamePageState extends State<GamePage> {
   bool sortFinished = false;
   bool gameStarted = false;
   bool showContinue = false;
+  late TotalScore totalScore = TotalScore();
+  int scoreNumber = 0;
 
   @override
   void initState() {
@@ -56,7 +58,9 @@ class _GamePageState extends State<GamePage> {
     });
     if (newGame) {
       await sorter.start();
+      await totalScore.resetScore();
     }
+    scoreNumber = await totalScore.totalScore;
     final sortedItems = await sorter.getCurrentSort();
     setState(() {
       items = sortedItems;
@@ -71,7 +75,9 @@ class _GamePageState extends State<GamePage> {
   Widget _getWidgetToShow() {
     if (sortFinished) {
       return FinishedGame(
-          onStartNewGame: () => _startGame(true), sortedItems: items);
+          onStartNewGame: () => _startGame(true),
+          sortedItems: items,
+          totalScore: scoreNumber);
     }
     if (showContinue) {
       return ContinueGame(
@@ -82,7 +88,11 @@ class _GamePageState extends State<GamePage> {
       return FreshGame(onStartNewGame: () => _startGame(true));
     }
     return showList
-        ? ShowItemListWidget(startSorting: _startSorting, items: items)
+        ? ShowItemListWidget(
+            startSorting: _startSorting,
+            items: items,
+            scoreNumber: scoreNumber,
+          )
         : ShowGameWidget(
             compareItems: itemsToCompare,
             onGameFinished: _onGameFinished,
@@ -111,7 +121,7 @@ class _GamePageState extends State<GamePage> {
     });
   }
 
-  void _onGameFinished(GameEndBlock endBlock) async {
+  void _onGameFinished(GameEndBlock endBlock, int score) async {
     setState(() {
       loading = true;
     });
@@ -121,21 +131,29 @@ class _GamePageState extends State<GamePage> {
     } else {
       await itemsToCompare.setSmallerItem(itemsToCompare.rightItem);
     }
+    final scoreNumber = await _addScore(score);
     if (await sorter.isFinished()) {
-      await _onSortFinished();
+      await _onSortFinished(scoreNumber);
     } else {
       final currentSort = await sorter.getCurrentSort();
       setState(() {
         items = currentSort;
         showList = true;
+        this.scoreNumber = scoreNumber;
         loading = false;
       });
     }
   }
 
-  _onSortFinished() async {
+  Future<int> _addScore(int score) async {
+    await totalScore.addScore(score);
+    return await totalScore.totalScore;
+  }
+
+  _onSortFinished(int scoreNumber) async {
     final sortedItems = await sorter.getSortedItems();
     setState(() {
+      this.scoreNumber = scoreNumber;
       items = sortedItems;
       loading = false;
       sortFinished = true;

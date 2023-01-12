@@ -18,14 +18,14 @@ class ForgeItemBoard implements ItemBoard<JiraIssue> {
 
   @override
   Future<List<JiraIssue>> getItems() async {
-    // final response = await promiseToFuture(getActiveSprintIssues());
-    // print('response $response');
-    // final json = jsonDecode(response);
-    // final issues = json['issues'] as List<dynamic>;
-    // return issues
-    //     .map((e) => JiraIssue(e['id'], e['fields']['summary']))
-    //     .toList();
-    return [JiraIssue('1', 'Issue A'), JiraIssue('2', 'Issue B')];
+    final response = await promiseToFuture(getActiveSprintIssues());
+    print('response $response');
+    final json = jsonDecode(response);
+    final issues = json['issues'] as List<dynamic>;
+    return issues
+        .map((e) => JiraIssue(e['id'], e['fields']['summary']))
+        .toList();
+    // return [JiraIssue('1', 'Issue A'), JiraIssue('2', 'Issue B')];
   }
 
   @override

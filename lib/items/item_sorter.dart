@@ -141,6 +141,7 @@ class ItemSorterImpl<ItemType extends Item> implements ItemSorter {
       rightArray = splitArrays.removeAt(0);
       mergedArrays = [];
       currentMerge = [];
+      finished = false;
       started = true;
     }
   }

@@ -2,12 +2,13 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:jira_game/path_game/score/extra_score.dart';
 import 'package:jira_game/path_game/score/flutter/extra_score_widget.dart';
+import 'package:jira_game/path_game/score/flutter/total_score_widget.dart';
 
 import '../../items/item_sorter.dart';
 import '../path_game.dart';
 
 class GameWrapper extends StatefulWidget {
-  final void Function(GameEndBlock endBlock) onGameFinished;
+  final void Function(GameEndBlock endBlock, int score) onGameFinished;
   final ItemsToCompare compareItems;
 
   const GameWrapper(
@@ -70,18 +71,7 @@ class _GameWrapperState extends State<GameWrapper> {
 
   Widget _showScore() {
     if (gameFinished) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: Row(
-          children: [
-            const Text(
-              'Total Score: ',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text('$totalScore'),
-          ],
-        ),
-      );
+      return TotalScoreWidget(totalScore: totalScore);
     }
     return ExtraScoreWidget(extraScore: extraScore);
   }
@@ -92,6 +82,6 @@ class _GameWrapperState extends State<GameWrapper> {
       gameFinished = true;
       totalScore = 10 + extraScore.extraScore;
     });
-    widget.onGameFinished(endBlock);
+    widget.onGameFinished(endBlock, totalScore);
   }
 }

@@ -6,7 +6,7 @@ import 'game_wrapper.dart';
 
 class ShowGameWidget extends StatefulWidget {
   final ItemsToCompare compareItems;
-  final void Function(GameEndBlock endBlock) onGameFinished;
+  final void Function(GameEndBlock endBlock, int score) onGameFinished;
 
   const ShowGameWidget(
       {Key? key, required this.compareItems, required this.onGameFinished})
@@ -19,6 +19,7 @@ class ShowGameWidget extends StatefulWidget {
 class _ShowGameWidgetState extends State<ShowGameWidget> {
   bool showContinueButton = false;
   late GameEndBlock endBlock;
+  int score = 0;
   late Widget gameWrapper;
 
   @override
@@ -39,7 +40,7 @@ class _ShowGameWidgetState extends State<ShowGameWidget> {
               child: ElevatedButton(
                 child: const Text('Continue'),
                 onPressed: () {
-                  widget.onGameFinished(endBlock);
+                  widget.onGameFinished(endBlock, score);
                 },
               ),
             )
@@ -49,8 +50,9 @@ class _ShowGameWidgetState extends State<ShowGameWidget> {
     ]);
   }
 
-  _onGameFinished(GameEndBlock endBlock) {
+  _onGameFinished(GameEndBlock endBlock, int score) {
     this.endBlock = endBlock;
+    this.score = score;
     setState(() {
       showContinueButton = true;
     });
