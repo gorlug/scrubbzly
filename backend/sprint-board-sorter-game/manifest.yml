@@ -23,10 +23,12 @@ permissions:
     scripts:
       - 'unsafe-eval'
     styles:
-       - 'unsafe-inline'
+      - 'unsafe-inline'
   external:
    fetch:
      client:
        - 'https://fonts.gstatic.com'
    styles:
      - 'https://unpkg.com/@atlaskit/*'
+   fonts:
+     - 'https://fonts.gstatic.com'

@@ -113,7 +113,7 @@ self.addEventListener("activate", function(event) {
 
 // The fetch handler redirects requests for RESOURCE files to the service
 // worker cache.
-self.addEventListener("fetch", (event) => {
+/* self.addEventListener("fetch", (event) => {
   if (event.request.method !== 'GET') {
     return;
   }
@@ -150,6 +150,7 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+ */
 
 self.addEventListener('message', (event) => {
   // SkipWaiting can be used to immediately activate a waiting service worker.
@@ -188,6 +189,10 @@ async function downloadOffline() {
 // Attempt to download the resource online before falling back to
 // the offline cache.
 function onlineFirst(event) {
+  console.log('event request', event.request);
+  if (event.request && event.request.url.indexOf('https://forge.cdn.prod.atlassian-dev.net') === 0) {
+    return;
+  }
   return event.respondWith(
     fetch(event.request).then((response) => {
       return caches.open(CACHE_NAME).then((cache) => {
