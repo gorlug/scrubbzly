@@ -40,6 +40,7 @@ class _AppState extends State<App> {
           primarySwatch: Colors.blue,
         ),
         home: const Scaffold(
+          backgroundColor: Colors.white,
           body: Padding(
             padding: EdgeInsets.all(8.0),
             child: GamePage(),
