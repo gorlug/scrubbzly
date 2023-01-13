@@ -19,11 +19,11 @@ class ExtraScore {
   start() {
     Timer.periodic(const Duration(seconds: 1), (timer) {
       secondsLeft -= 1;
+      onSecondsChanged(secondsLeft);
       if (secondsLeft == 0 || stopped) {
         timer.cancel();
         return;
       }
-      onSecondsChanged(secondsLeft);
       if (secondsLeft % 10 == 0) {
         extraScore -= 10;
         onExtraScoreChanged(extraScore);
