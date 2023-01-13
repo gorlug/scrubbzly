@@ -16,7 +16,7 @@ class PathGameBoard {
 
   void createBoard(int lengthX, int lengthY) {
     final game = _createARouteGame(lengthX, lengthY);
-    print(game.printBoard());
+    // print(game.printBoard());
 
     for (var y = 0; y < game.board.length; y++) {
       final row = <GameBlockSprite>[];
@@ -134,7 +134,7 @@ class PathGameBoard {
 
   void _addBRoute(int lengthX, int lengthY) {
     final game = _createBRouteGame(lengthX, lengthY);
-    print(game.printBoard());
+    //print(game.printBoard());
 
     for (var y = 0; y < game.board.length; y++) {
       final boardRow = game.board[y];

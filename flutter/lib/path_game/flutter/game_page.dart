@@ -142,7 +142,6 @@ class _GamePageState extends State<GamePage> {
     setState(() {
       loading = true;
     });
-    print('endBlock: $endBlock');
     if (endBlock == GameEndBlock.A) {
       await itemsToCompare.setSmallerItem(itemsToCompare.leftItem);
     } else {

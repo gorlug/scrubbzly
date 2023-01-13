@@ -68,7 +68,7 @@ class PathGame extends FlameGame
   @override
   void onHorizontalDragEnd(DragEndInfo info) {
     super.onHorizontalDragEnd(info);
-    print('onHorizontalDragEnd $_horizontalDragComponents');
+    // print('onHorizontalDragEnd $_horizontalDragComponents');
   }
 
   @override

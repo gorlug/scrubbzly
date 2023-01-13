@@ -45,10 +45,8 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
   Future<bool> loadVariables() async {
     final response = await promiseToFuture(getStorage(itemSorterKey));
     if (response == null) {
-      print('load variables is null');
       return false;
     }
-    print('load response $response');
     final json = jsonDecode(response);
     sortedItems = (json['sortedItems'] as List<dynamic>)
         .map((e) => JiraIssue(e['id'], e['name']))
@@ -78,7 +76,6 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
   }
 
   Future<void> deleteVariables() async {
-    print('delete variables');
     await promiseToFuture(deleteStorage(itemSorterKey));
   }
 
@@ -91,7 +88,6 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
     // }
     await super.start();
     await saveVariables();
-    print('leftArray $leftArray');
   }
 
   @override
@@ -128,7 +124,6 @@ class ForgeItemSorter extends ItemSorterImpl<JiraIssue> {
   @override
   Future<bool> hasStarted() async {
     await loadVariables();
-    print('has started $started');
     return super.hasStarted();
   }
 
