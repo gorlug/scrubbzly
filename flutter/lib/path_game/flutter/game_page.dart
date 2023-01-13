@@ -8,6 +8,7 @@ import '../../app.dart';
 import '../../items/item_board.dart';
 import '../../items/item_sorter.dart';
 import '../path_game.dart';
+import 'error_getting_board_widget.dart';
 import 'show_game_widget.dart';
 import 'show_item_list_widget.dart';
 
@@ -30,6 +31,7 @@ class _GamePageState extends State<GamePage> {
   bool showContinue = false;
   late TotalScore totalScore = TotalScore();
   int scoreNumber = 0;
+  bool gettingBoardError = false;
 
   @override
   void initState() {
@@ -38,13 +40,20 @@ class _GamePageState extends State<GamePage> {
   }
 
   Future<void> _initSorter() async {
-    final itemBoard = getIt.get<ItemBoard>();
-    sorter = await itemBoard.createSorter();
-    final hasStarted = await sorter.hasStarted();
-    setState(() {
-      showContinue = hasStarted;
-      loading = false;
-    });
+    try {
+      final itemBoard = getIt.get<ItemBoard>();
+      sorter = await itemBoard.createSorter();
+      final hasStarted = await sorter.hasStarted();
+      setState(() {
+        showContinue = hasStarted;
+        loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        gettingBoardError = true;
+        loading = false;
+      });
+    }
   }
 
   @override
@@ -73,6 +82,9 @@ class _GamePageState extends State<GamePage> {
   }
 
   Widget _getWidgetToShow() {
+    if(gettingBoardError) {
+      return const ErrorGettingBoardWidget();
+    }
     if (sortFinished) {
       return FinishedGame(
           onStartNewGame: () => _startGame(true),
