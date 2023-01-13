@@ -1,10 +1,10 @@
 modules:
   jira:globalPage:
-    - key: sprint-board-sorter-game-hello-world-page
+    - key: scrubzzly-page
       resource: main
       resolver:
         function: resolver
-      title: Sprint Board Sorter Game
+      title: Scrubzzly
   function:
     - key: resolver
       handler: index.handler
