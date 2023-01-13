@@ -5,6 +5,7 @@ modules:
       resolver:
         function: resolver
       title: Scrubzzly
+      icon: https://achim-rohn.de/scrubzzly_logo.png
   function:
     - key: resolver
       handler: index.handler
