@@ -10,6 +10,8 @@ class Item {
 }
 
 abstract class ItemSorter {
+  List<Item> get itemsToSort;
+
   Future<bool> hasStarted();
 
   Future<bool> isFinished();
@@ -43,6 +45,7 @@ class LocalItemSorterFactory implements ItemSorterFactory {
 }
 
 class ItemSorterImpl<ItemType extends Item> implements ItemSorter {
+  @override
   final List<ItemType> itemsToSort;
   List<ItemType> sortedItems = [];
   bool started = false;

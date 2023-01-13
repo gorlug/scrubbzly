@@ -5,6 +5,6 @@ class ErrorGettingBoardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text('There are less than two issues on the scrum board. Add more issues to play the game.');
+    return const Text('There was an error getting the scrum board issues.', style: TextStyle(color: Colors.red),);
   }
 }

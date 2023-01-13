@@ -32,6 +32,7 @@ class _GamePageState extends State<GamePage> {
   late TotalScore totalScore = TotalScore();
   int scoreNumber = 0;
   bool gettingBoardError = false;
+  bool notMoreThanOneItem = false;
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class _GamePageState extends State<GamePage> {
       final hasStarted = await sorter.hasStarted();
       setState(() {
         showContinue = hasStarted;
+        notMoreThanOneItem = sorter.itemsToSort.length <= 1;
         loading = false;
       });
     } catch (e) {
@@ -83,6 +85,9 @@ class _GamePageState extends State<GamePage> {
 
   Widget _getWidgetToShow() {
     if(gettingBoardError) {
+      return const ErrorGettingBoardWidget();
+    }
+    if (notMoreThanOneItem) {
       return const ErrorGettingBoardWidget();
     }
     if (sortFinished) {
