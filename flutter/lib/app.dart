@@ -38,6 +38,11 @@ class _AppState extends State<App> {
         title: 'Jira Game',
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          textTheme: const TextTheme(
+              labelSmall: TextStyle(fontSize: 25),
+              bodyMedium: TextStyle(fontSize: 20),
+              labelLarge: TextStyle(fontSize: 21),
+              titleMedium: TextStyle(fontSize: 20)),
         ),
         home: const Scaffold(
           backgroundColor: Colors.white,
