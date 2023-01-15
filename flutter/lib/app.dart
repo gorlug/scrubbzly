@@ -9,6 +9,8 @@ import 'package:jira_game/items/item_sorter_with_delay.dart';
 import 'package:jira_game/items/flutter/sort_finished_widget.dart';
 import 'package:jira_game/path_game/block.dart';
 import 'package:jira_game/path_game/path_game.dart';
+import 'package:responsive_framework/responsive_framework.dart';
+import 'package:responsive_framework/responsive_wrapper.dart';
 
 import 'items/item_board.dart';
 import 'path_game/flutter/game_page.dart';
@@ -35,21 +37,37 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Jira Game',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          textTheme: const TextTheme(
-              labelSmall: TextStyle(fontSize: 25),
-              bodyMedium: TextStyle(fontSize: 20),
-              labelLarge: TextStyle(fontSize: 21),
-              titleMedium: TextStyle(fontSize: 20)),
-        ),
-        home: const Scaffold(
-          backgroundColor: Colors.white,
-          body: Padding(
-            padding: EdgeInsets.all(8.0),
-            child: GamePage(),
-          ),
-        ));
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        textTheme: const TextTheme(
+            labelSmall: TextStyle(fontSize: 25),
+            bodyMedium: TextStyle(fontSize: 20),
+            labelLarge: TextStyle(fontSize: 21),
+            titleMedium: TextStyle(fontSize: 20)),
+      ),
+      builder: (context, child) => ResponsiveWrapper.builder(
+          BouncingScrollWrapper.builder(context, child!),
+          minWidth: gameWidth,
+          defaultScale: true,
+          breakpoints: [
+            const ResponsiveBreakpoint.resize(gameWidth, name: MOBILE),
+            const ResponsiveBreakpoint.autoScale(800, name: TABLET),
+            const ResponsiveBreakpoint.autoScale(1000, name: TABLET),
+            const ResponsiveBreakpoint.resize(1200, name: DESKTOP),
+            const ResponsiveBreakpoint.autoScale(2460, name: "4K"),
+          ],
+          background: Container(color: const Color(0xFFF5F5F5))),
+      initialRoute: '/',
+      debugShowCheckedModeBanner: false,
+      routes: {
+        '/': (context) => const Scaffold(
+              backgroundColor: Colors.white,
+              body: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: GamePage(),
+              ),
+            ),
+      },
+    );
   }
 }
