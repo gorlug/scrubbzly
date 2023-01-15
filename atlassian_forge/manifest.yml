@@ -13,7 +13,7 @@ resources:
   - key: main
     path: static/flutter-game/build
 app:
-  id: ari:cloud:ecosystem::app/38d21d14-319d-4388-ba1f-0827967618bb
+  id: ari:cloud:ecosystem::app/dfe44326-1572-4733-87d4-ce2764d53769
 permissions:
   scopes:
       - 'write:jira-work'
